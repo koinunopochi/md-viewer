@@ -1,0 +1,48 @@
+# Test files
+test-marp.md
+*.test.js
+*.spec.js
+
+# Development files
+.gitignore
+.eslintrc
+.prettierrc
+
+# Documentation
+docs/
+examples/
+
+# CI/CD
+.github/
+.gitlab-ci.yml
+.travis.yml
+
+# Editor directories
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Development dependencies
+node_modules/
+coverage/
+.nyc_output/
+
+# Build artifacts
+dist/
+build/
+*.tgz
+
+# Temporary files
+tmp/
+temp/
