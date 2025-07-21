@@ -2,9 +2,10 @@ import * as fs from 'fs/promises';
 import * as path from 'path';
 import { IFileService } from '../interfaces/IFileService';
 import { IPathResolver } from '../interfaces/IPathResolver';
+import { IDirectoryTreeBuilder } from '../interfaces/IDirectoryTreeBuilder';
 import { TreeNode } from '../models/TreeNode';
 
-export class DirectoryTreeBuilder {
+export class DirectoryTreeBuilder implements IDirectoryTreeBuilder {
   constructor(
     private fileService: IFileService,
     private pathResolver: IPathResolver
