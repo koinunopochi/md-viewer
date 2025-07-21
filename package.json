@@ -1,0 +1,15 @@
+{
+  "name": "md-viewer",
+  "version": "1.0.0",
+  "description": "Simple Markdown to HTML viewer using zenn-markdown-html",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "dependencies": {
+    "@marp-team/marp-core": "^4.1.0",
+    "express": "^4.18.2",
+    "js-yaml": "^4.1.0",
+    "zenn-markdown-html": "^0.1.151"
+  }
+}
