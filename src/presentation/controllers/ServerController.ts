@@ -5,6 +5,7 @@ import { IPathResolver } from '../../domain/interfaces/IPathResolver';
 import { IDirectoryTreeBuilder } from '../../domain/interfaces/IDirectoryTreeBuilder';
 import { IMarkdownRenderer } from '../../domain/interfaces/IMarkdownRenderer';
 import { IMarpRenderer } from '../../domain/interfaces/IMarpRenderer';
+import { ICsvRenderer } from '../../domain/interfaces/ICsvRenderer';
 import { IServerController } from './IServerController';
 import { TreeNode } from '../../domain/entities/TreeNode';
 import { HtmlTemplate } from '../templates/HtmlTemplate';
@@ -17,6 +18,7 @@ export class ServerController implements IServerController {
     private treeBuilder: IDirectoryTreeBuilder,
     private markdownRenderer: IMarkdownRenderer,
     private marpRenderer: IMarpRenderer,
+    private csvRenderer: ICsvRenderer,
     private baseDir: string
   ) {}
 
@@ -62,7 +64,9 @@ export class ServerController implements IServerController {
       }
       
       // Check file type
-      if (!this.fileService.isMarkdownFile(filename) && !this.fileService.isHtmlFile(filename)) {
+      if (!this.fileService.isMarkdownFile(filename) && 
+          !this.fileService.isHtmlFile(filename) &&
+          !this.fileService.isCsvFile(filename)) {
         res.status(400).send('Invalid file type');
         return;
       }
@@ -167,6 +171,13 @@ export class ServerController implements IServerController {
           const fullHtml = HtmlTemplate.generate(filename, fullContent);
           res.send(fullHtml);
         }
+      } else if (this.fileService.isCsvFile(filename)) {
+        // Handle CSV files
+        const csvHtml = this.csvRenderer.render(content);
+        const backLink = '<a href="/" class="back-link">← Back to file list</a>';
+        const fullContent = backLink + csvHtml;
+        const fullHtml = HtmlTemplate.generate(filename, fullContent);
+        res.send(fullHtml);
       } else {
         // Handle HTML files
         // Check if request is from iframe
@@ -255,7 +266,7 @@ export class ServerController implements IServerController {
       <div class="file-list">
         <h2>Document Files</h2>
         <p>📁 Directory: ${this.baseDir}</p>
-        <p>✅ View Markdown and HTML files</p>
+        <p>✅ View Markdown, HTML, and CSV files</p>
         <p>✅ Direct Mermaid rendering without iframes</p>
         ${recursive ? '<p>🔄 Recursive search: Enabled</p>' : ''}
         <p>💡 Click directories to expand/collapse</p>
@@ -332,7 +343,8 @@ export class ServerController implements IServerController {
         html += '</li>';
       }
     } else if (node.type === 'file') {
-      const icon = node.name.endsWith('.md') ? '📝' : '🌐';
+      const icon = node.name.endsWith('.md') ? '📝' : 
+                   node.name.endsWith('.csv') ? '📊' : '🌐';
       html += `<li class="file" style="padding-left: ${depth * 20}px">
         <span style="width: 12px; display: inline-block;"></span>
         ${icon} <a href="/view/${encodeURIComponent(node.relativePath)}">${node.name}</a>

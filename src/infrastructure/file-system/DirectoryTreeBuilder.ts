@@ -66,7 +66,8 @@ export class DirectoryTreeBuilder implements IDirectoryTreeBuilder {
         
         if (entry.isFile() && 
             (this.fileService.isMarkdownFile(entry.name) || 
-             this.fileService.isHtmlFile(entry.name))) {
+             this.fileService.isHtmlFile(entry.name) ||
+             this.fileService.isCsvFile(entry.name))) {
           const fileNode = new TreeNode(entry.name, 'file', relativePath);
           parentNode.addChild(fileNode);
         }
@@ -97,7 +98,8 @@ export class DirectoryTreeBuilder implements IDirectoryTreeBuilder {
         
         if (entry.isFile() && 
             (this.fileService.isMarkdownFile(entry.name) || 
-             this.fileService.isHtmlFile(entry.name))) {
+             this.fileService.isHtmlFile(entry.name) ||
+             this.fileService.isCsvFile(entry.name))) {
           const fileNode = new TreeNode(entry.name, 'file', entry.name);
           rootNode.addChild(fileNode);
         }

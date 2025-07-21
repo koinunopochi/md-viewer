@@ -4,11 +4,13 @@ import { PathResolver } from '../../infrastructure/file-system/PathResolver';
 import { DirectoryTreeBuilder } from '../../infrastructure/file-system/DirectoryTreeBuilder';
 import { MarkdownRenderer } from '../../infrastructure/renderers/MarkdownRenderer';
 import { MarpRenderer } from '../../infrastructure/renderers/MarpRenderer';
+import { CsvRenderer } from '../../infrastructure/renderers/CsvRenderer';
 import { IFileService } from '../../domain/interfaces/IFileService';
 import { IPathResolver } from '../../domain/interfaces/IPathResolver';
 import { IDirectoryTreeBuilder } from '../../domain/interfaces/IDirectoryTreeBuilder';
 import { IMarkdownRenderer } from '../../domain/interfaces/IMarkdownRenderer';
 import { IMarpRenderer } from '../../domain/interfaces/IMarpRenderer';
+import { ICsvRenderer } from '../../domain/interfaces/ICsvRenderer';
 import { IServerController } from '../controllers/IServerController';
 
 export class AppFactory {
@@ -18,6 +20,7 @@ export class AppFactory {
     const treeBuilder = this.createDirectoryTreeBuilder(fileService, pathResolver);
     const markdownRenderer = this.createMarkdownRenderer();
     const marpRenderer = this.createMarpRenderer();
+    const csvRenderer = this.createCsvRenderer();
 
     return new ServerController(
       fileService,
@@ -25,6 +28,7 @@ export class AppFactory {
       treeBuilder,
       markdownRenderer,
       marpRenderer,
+      csvRenderer,
       baseDir
     );
   }
@@ -50,5 +54,9 @@ export class AppFactory {
 
   static createMarpRenderer(): IMarpRenderer {
     return new MarpRenderer();
+  }
+
+  static createCsvRenderer(): ICsvRenderer {
+    return new CsvRenderer();
   }
 }

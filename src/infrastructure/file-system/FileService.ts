@@ -25,4 +25,9 @@ export class FileService implements IFileService {
     const ext = path.extname(filePath).toLowerCase();
     return ext === '.html' || ext === '.htm';
   }
+
+  isCsvFile(filePath: string): boolean {
+    const ext = path.extname(filePath).toLowerCase();
+    return ext === '.csv';
+  }
 }

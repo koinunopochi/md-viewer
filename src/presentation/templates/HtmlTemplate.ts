@@ -432,6 +432,118 @@ export class HtmlTemplate {
             border: none;
             border-radius: 0;
         }
+        /* CSV表示用スタイル */
+        .csv-container {
+            margin: 20px 0;
+            border: 1px solid #d1d9e0;
+            border-radius: 8px;
+            overflow: hidden;
+        }
+        .csv-view-toggle {
+            background: #f6f8fa;
+            padding: 10px;
+            display: flex;
+            gap: 10px;
+            border-bottom: 1px solid #d1d9e0;
+        }
+        .csv-toggle-btn {
+            padding: 6px 12px;
+            border: 1px solid #d1d9e0;
+            background: white;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            transition: all 0.2s;
+        }
+        .csv-toggle-btn:hover {
+            background: #f0f0f0;
+        }
+        .csv-toggle-btn.active {
+            background: #0969da;
+            color: white;
+            border-color: #0969da;
+        }
+        .csv-toggle-btn .icon {
+            font-size: 16px;
+        }
+        .csv-view {
+            display: none;
+            padding: 20px;
+        }
+        .csv-view.active {
+            display: block;
+        }
+        .csv-table-wrapper {
+            overflow-x: auto;
+        }
+        .csv-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 14px;
+        }
+        .csv-table th,
+        .csv-table td {
+            padding: 8px 12px;
+            text-align: left;
+            border: 1px solid #d1d9e0;
+        }
+        .csv-table th {
+            background: #f6f8fa;
+            font-weight: 600;
+            position: sticky;
+            top: 0;
+            z-index: 10;
+        }
+        .csv-table tbody tr:hover {
+            background: #f0f3f6;
+        }
+        .csv-table tbody tr.even {
+            background: #fafbfc;
+        }
+        .csv-raw-content {
+            background: #f6f8fa;
+            padding: 16px;
+            border-radius: 6px;
+            overflow-x: auto;
+            font-family: 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, monospace;
+            font-size: 13px;
+            line-height: 1.5;
+            margin: 0;
+        }
+        .csv-info {
+            margin-top: 10px;
+            font-size: 14px;
+            color: #586069;
+        }
+        .csv-error {
+            padding: 20px;
+            color: #d73a49;
+        }
+        .csv-error h3 {
+            margin-top: 0;
+            color: #d73a49;
+        }
+        .csv-error details {
+            margin: 10px 0;
+            padding: 10px;
+            background: #ffeef0;
+            border-radius: 6px;
+        }
+        .csv-error summary {
+            cursor: pointer;
+            font-weight: 600;
+        }
+        .csv-error pre {
+            margin: 10px 0;
+            padding: 10px;
+            background: #f6f8fa;
+            border-radius: 6px;
+            font-size: 12px;
+            overflow-x: auto;
+        }
     `;
   }
 
