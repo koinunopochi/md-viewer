@@ -1,5 +1,5 @@
 import { Marp } from '@marp-team/marp-core';
-import { IMarpRenderer, MarpRenderResult } from '../interfaces/IMarpRenderer';
+import { IMarpRenderer, MarpRenderResult } from '../../domain/interfaces/IMarpRenderer';
 
 export class MarpRenderer implements IMarpRenderer {
   private marp: Marp;

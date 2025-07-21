@@ -1,4 +1,4 @@
-import { MarpRenderer } from './MarpRenderer';
+import { MarpRenderer } from '../../infrastructure/renderers/MarpRenderer';
 
 describe('MarpRenderer', () => {
   let renderer: MarpRenderer;

@@ -1,4 +1,4 @@
-import { ChatConverter } from './ChatConverter';
+import { ChatConverter } from '../../infrastructure/renderers/ChatConverter';
 
 describe('ChatConverter', () => {
   let converter: ChatConverter;

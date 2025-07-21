@@ -1,6 +1,6 @@
 import { DirectoryTreeBuilder } from './DirectoryTreeBuilder';
-import { IFileService } from '../interfaces/IFileService';
-import { IPathResolver } from '../interfaces/IPathResolver';
+import { IFileService } from '../../domain/interfaces/IFileService';
+import { IPathResolver } from '../../domain/interfaces/IPathResolver';
 import * as fs from 'fs/promises';
 
 // Mock implementations

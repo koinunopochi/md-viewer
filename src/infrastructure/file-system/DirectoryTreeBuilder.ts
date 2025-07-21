@@ -1,9 +1,9 @@
 import * as fs from 'fs/promises';
 import * as path from 'path';
-import { IFileService } from '../interfaces/IFileService';
-import { IPathResolver } from '../interfaces/IPathResolver';
-import { IDirectoryTreeBuilder } from '../interfaces/IDirectoryTreeBuilder';
-import { TreeNode } from '../models/TreeNode';
+import { IFileService } from '../../domain/interfaces/IFileService';
+import { IPathResolver } from '../../domain/interfaces/IPathResolver';
+import { IDirectoryTreeBuilder } from '../../domain/interfaces/IDirectoryTreeBuilder';
+import { TreeNode } from '../../domain/entities/TreeNode';
 
 export class DirectoryTreeBuilder implements IDirectoryTreeBuilder {
   constructor(

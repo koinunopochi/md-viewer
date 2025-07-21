@@ -1,12 +1,12 @@
 import { Request, Response } from 'express';
 import * as path from 'path';
-import { IFileService } from '../interfaces/IFileService';
-import { IPathResolver } from '../interfaces/IPathResolver';
-import { IDirectoryTreeBuilder } from '../interfaces/IDirectoryTreeBuilder';
-import { IMarkdownRenderer } from '../interfaces/IMarkdownRenderer';
-import { IMarpRenderer } from '../interfaces/IMarpRenderer';
-import { IServerController } from '../interfaces/IServerController';
-import { TreeNode } from '../models/TreeNode';
+import { IFileService } from '../../domain/interfaces/IFileService';
+import { IPathResolver } from '../../domain/interfaces/IPathResolver';
+import { IDirectoryTreeBuilder } from '../../domain/interfaces/IDirectoryTreeBuilder';
+import { IMarkdownRenderer } from '../../domain/interfaces/IMarkdownRenderer';
+import { IMarpRenderer } from '../../domain/interfaces/IMarpRenderer';
+import { IServerController } from './IServerController';
+import { TreeNode } from '../../domain/entities/TreeNode';
 
 export class ServerController implements IServerController {
   constructor(

@@ -1,10 +1,10 @@
-import { ServerController } from './ServerController';
-import { IFileService } from '../interfaces/IFileService';
-import { IPathResolver } from '../interfaces/IPathResolver';
-import { IDirectoryTreeBuilder } from '../interfaces/IDirectoryTreeBuilder';
-import { IMarkdownRenderer } from '../interfaces/IMarkdownRenderer';
-import { IMarpRenderer, MarpRenderResult } from '../interfaces/IMarpRenderer';
-import { TreeNode } from '../models/TreeNode';
+import { ServerController } from '../../presentation/controllers/ServerController';
+import { IFileService } from '../../domain/interfaces/IFileService';
+import { IPathResolver } from '../../domain/interfaces/IPathResolver';
+import { IDirectoryTreeBuilder } from '../../domain/interfaces/IDirectoryTreeBuilder';
+import { IMarkdownRenderer } from '../../domain/interfaces/IMarkdownRenderer';
+import { IMarpRenderer, MarpRenderResult } from '../../domain/interfaces/IMarpRenderer';
+import { TreeNode } from '../../domain/entities/TreeNode';
 import { Request, Response } from 'express';
 
 // Mock implementations

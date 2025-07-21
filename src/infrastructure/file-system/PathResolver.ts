@@ -1,5 +1,5 @@
 import * as path from 'path';
-import { IPathResolver } from '../interfaces/IPathResolver';
+import { IPathResolver } from '../../domain/interfaces/IPathResolver';
 
 export class PathResolver implements IPathResolver {
   private baseDir: string;

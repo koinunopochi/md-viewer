@@ -1,15 +1,15 @@
 import { ServerController } from '../controllers/ServerController';
-import { FileService } from '../services/FileService';
-import { PathResolver } from '../services/PathResolver';
-import { DirectoryTreeBuilder } from '../services/DirectoryTreeBuilder';
-import { MarkdownRenderer } from '../renderers/MarkdownRenderer';
-import { MarpRenderer } from '../renderers/MarpRenderer';
-import { IFileService } from '../interfaces/IFileService';
-import { IPathResolver } from '../interfaces/IPathResolver';
-import { IDirectoryTreeBuilder } from '../interfaces/IDirectoryTreeBuilder';
-import { IMarkdownRenderer } from '../interfaces/IMarkdownRenderer';
-import { IMarpRenderer } from '../interfaces/IMarpRenderer';
-import { IServerController } from '../interfaces/IServerController';
+import { FileService } from '../../infrastructure/file-system/FileService';
+import { PathResolver } from '../../infrastructure/file-system/PathResolver';
+import { DirectoryTreeBuilder } from '../../infrastructure/file-system/DirectoryTreeBuilder';
+import { MarkdownRenderer } from '../../infrastructure/renderers/MarkdownRenderer';
+import { MarpRenderer } from '../../infrastructure/renderers/MarpRenderer';
+import { IFileService } from '../../domain/interfaces/IFileService';
+import { IPathResolver } from '../../domain/interfaces/IPathResolver';
+import { IDirectoryTreeBuilder } from '../../domain/interfaces/IDirectoryTreeBuilder';
+import { IMarkdownRenderer } from '../../domain/interfaces/IMarkdownRenderer';
+import { IMarpRenderer } from '../../domain/interfaces/IMarpRenderer';
+import { IServerController } from '../controllers/IServerController';
 
 export class AppFactory {
   static createServerController(baseDir: string, excludePatterns: RegExp[] = []): IServerController {

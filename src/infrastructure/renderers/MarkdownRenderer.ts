@@ -1,7 +1,7 @@
 import markdownToHtml from 'zenn-markdown-html';
 import * as yaml from 'js-yaml';
 import * as path from 'path';
-import { IMarkdownRenderer } from '../interfaces/IMarkdownRenderer';
+import { IMarkdownRenderer } from '../../domain/interfaces/IMarkdownRenderer';
 
 export class MarkdownRenderer implements IMarkdownRenderer {
   render(markdown: string): string {

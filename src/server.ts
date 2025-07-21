@@ -2,7 +2,7 @@
 
 import express from 'express';
 import * as path from 'path';
-import { AppFactory } from './factories/AppFactory';
+import { AppFactory } from './presentation/factories/AppFactory';
 
 const app = express();
 const PORT = 15559;

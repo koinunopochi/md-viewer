@@ -1,10 +1,10 @@
-import { AppFactory } from './AppFactory';
-import { ServerController } from '../controllers/ServerController';
-import { FileService } from '../services/FileService';
-import { PathResolver } from '../services/PathResolver';
-import { DirectoryTreeBuilder } from '../services/DirectoryTreeBuilder';
-import { MarkdownRenderer } from '../renderers/MarkdownRenderer';
-import { MarpRenderer } from '../renderers/MarpRenderer';
+import { AppFactory } from '../../presentation/factories/AppFactory';
+import { ServerController } from '../../presentation/controllers/ServerController';
+import { FileService } from '../../infrastructure/file-system/FileService';
+import { PathResolver } from '../../infrastructure/file-system/PathResolver';
+import { DirectoryTreeBuilder } from '../../infrastructure/file-system/DirectoryTreeBuilder';
+import { MarkdownRenderer } from '../../infrastructure/renderers/MarkdownRenderer';
+import { MarpRenderer } from '../../infrastructure/renderers/MarpRenderer';
 
 describe('AppFactory', () => {
   describe('createServerController', () => {

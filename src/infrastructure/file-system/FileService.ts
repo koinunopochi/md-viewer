@@ -1,6 +1,6 @@
 import * as fs from 'fs/promises';
 import * as path from 'path';
-import { IFileService } from '../interfaces/IFileService';
+import { IFileService } from '../../domain/interfaces/IFileService';
 
 export class FileService implements IFileService {
   async readFile(filePath: string): Promise<string> {

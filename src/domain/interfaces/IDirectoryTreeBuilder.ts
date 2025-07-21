@@ -1,4 +1,4 @@
-import { TreeNode } from '../models/TreeNode';
+import { TreeNode } from '../entities/TreeNode';
 
 export interface IDirectoryTreeBuilder {
   buildTree(dir: string, recursive: boolean): Promise<TreeNode>;
