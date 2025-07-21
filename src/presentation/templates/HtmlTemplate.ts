@@ -544,6 +544,102 @@ export class HtmlTemplate {
             font-size: 12px;
             overflow-x: auto;
         }
+        /* ファイルナビゲーション */
+        .file-navigation {
+            margin-top: 60px;
+            padding-top: 40px;
+            border-top: 2px solid #e1e4e8;
+        }
+        .nav-prev-next {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+        }
+        .nav-prev, .nav-next {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 12px 20px;
+            background: #f6f8fa;
+            border: 1px solid #d1d9e0;
+            border-radius: 8px;
+            text-decoration: none;
+            color: #24292e;
+            transition: all 0.2s;
+            max-width: 45%;
+        }
+        .nav-prev:hover, .nav-next:hover {
+            background: #e1e4e8;
+            border-color: #c9c9c9;
+            transform: translateY(-1px);
+        }
+        .nav-disabled {
+            visibility: hidden;
+        }
+        .nav-arrow {
+            font-size: 20px;
+            color: #0969da;
+        }
+        .nav-text {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+        .nav-label {
+            font-size: 12px;
+            color: #586069;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        .nav-filename {
+            font-size: 14px;
+            font-weight: 500;
+        }
+        .nav-related {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+        }
+        .nav-section {
+            background: #fafbfc;
+            border: 1px solid #e1e4e8;
+            border-radius: 8px;
+            padding: 16px;
+        }
+        .nav-section-title {
+            margin: 0 0 12px 0;
+            font-size: 14px;
+            color: #24292e;
+            font-weight: 600;
+        }
+        .nav-links {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+        .nav-file-link {
+            display: block;
+            padding: 6px 10px;
+            background: white;
+            border: 1px solid #e1e4e8;
+            border-radius: 6px;
+            text-decoration: none;
+            color: #0969da;
+            font-size: 13px;
+            transition: all 0.2s;
+        }
+        .nav-file-link:hover {
+            background: #f6f8fa;
+            border-color: #0969da;
+        }
+        .nav-more {
+            display: block;
+            padding: 6px 10px;
+            color: #586069;
+            font-size: 13px;
+            text-align: center;
+        }
     `;
   }
 

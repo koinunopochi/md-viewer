@@ -6,9 +6,11 @@ import { IDirectoryTreeBuilder } from '../../domain/interfaces/IDirectoryTreeBui
 import { IMarkdownRenderer } from '../../domain/interfaces/IMarkdownRenderer';
 import { IMarpRenderer } from '../../domain/interfaces/IMarpRenderer';
 import { ICsvRenderer } from '../../domain/interfaces/ICsvRenderer';
+import { IFileNavigator } from '../../domain/interfaces/IFileNavigator';
 import { IServerController } from './IServerController';
 import { TreeNode } from '../../domain/entities/TreeNode';
 import { HtmlTemplate } from '../templates/HtmlTemplate';
+import { NavigationTemplate } from '../templates/NavigationTemplate';
 import { ChatConverter } from '../../infrastructure/renderers/ChatConverter';
 
 export class ServerController implements IServerController {
@@ -19,6 +21,7 @@ export class ServerController implements IServerController {
     private markdownRenderer: IMarkdownRenderer,
     private marpRenderer: IMarpRenderer,
     private csvRenderer: ICsvRenderer,
+    private fileNavigator: IFileNavigator,
     private baseDir: string
   ) {}
 
@@ -167,7 +170,9 @@ export class ServerController implements IServerController {
           html = this.processHtmlIframeLinks(html, filename);
           
           const backLink = '<a href="/" class="back-link">← Back to file list</a>';
-          const fullContent = backLink + '<div class="markdown-body">' + html + '</div>' + this.getIframeScript();
+          const navigation = await this.fileNavigator.getNavigation(filename);
+          const navigationHtml = NavigationTemplate.generate(navigation);
+          const fullContent = backLink + '<div class="markdown-body">' + html + '</div>' + navigationHtml + this.getIframeScript();
           const fullHtml = HtmlTemplate.generate(filename, fullContent);
           res.send(fullHtml);
         }
@@ -175,7 +180,9 @@ export class ServerController implements IServerController {
         // Handle CSV files
         const csvHtml = this.csvRenderer.render(content);
         const backLink = '<a href="/" class="back-link">← Back to file list</a>';
-        const fullContent = backLink + csvHtml;
+        const navigation = await this.fileNavigator.getNavigation(filename);
+        const navigationHtml = NavigationTemplate.generate(navigation);
+        const fullContent = backLink + csvHtml + navigationHtml;
         const fullHtml = HtmlTemplate.generate(filename, fullContent);
         res.send(fullHtml);
       } else {
@@ -190,7 +197,7 @@ export class ServerController implements IServerController {
           return;
         }
         
-        const fullHtml = this.wrapHtmlFile(filename, content);
+        const fullHtml = await this.wrapHtmlFile(filename, content);
         res.send(fullHtml);
       }
     } catch (error) {
@@ -364,8 +371,10 @@ export class ServerController implements IServerController {
   }
 
 
-  private wrapHtmlFile(filename: string, _content: string): string {
+  private async wrapHtmlFile(filename: string, _content: string): Promise<string> {
     const backLink = '<a href="/" class="back-link">← Back to file list</a>';
+    const navigation = await this.fileNavigator.getNavigation(filename);
+    const navigationHtml = NavigationTemplate.generate(navigation);
     const iframeContent = `
       <div style="border: 1px solid #d1d9e0; border-radius: 6px; margin: 20px 0;">
         <iframe 
@@ -376,7 +385,7 @@ export class ServerController implements IServerController {
         ></iframe>
       </div>
     `;
-    return HtmlTemplate.generate(filename, backLink + iframeContent);
+    return HtmlTemplate.generate(filename, backLink + iframeContent + navigationHtml);
   }
 
 

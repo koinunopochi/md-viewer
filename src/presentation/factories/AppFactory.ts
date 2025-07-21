@@ -5,12 +5,14 @@ import { DirectoryTreeBuilder } from '../../infrastructure/file-system/Directory
 import { MarkdownRenderer } from '../../infrastructure/renderers/MarkdownRenderer';
 import { MarpRenderer } from '../../infrastructure/renderers/MarpRenderer';
 import { CsvRenderer } from '../../infrastructure/renderers/CsvRenderer';
+import { FileNavigator } from '../../infrastructure/file-system/FileNavigator';
 import { IFileService } from '../../domain/interfaces/IFileService';
 import { IPathResolver } from '../../domain/interfaces/IPathResolver';
 import { IDirectoryTreeBuilder } from '../../domain/interfaces/IDirectoryTreeBuilder';
 import { IMarkdownRenderer } from '../../domain/interfaces/IMarkdownRenderer';
 import { IMarpRenderer } from '../../domain/interfaces/IMarpRenderer';
 import { ICsvRenderer } from '../../domain/interfaces/ICsvRenderer';
+import { IFileNavigator } from '../../domain/interfaces/IFileNavigator';
 import { IServerController } from '../controllers/IServerController';
 
 export class AppFactory {
@@ -21,6 +23,7 @@ export class AppFactory {
     const markdownRenderer = this.createMarkdownRenderer();
     const marpRenderer = this.createMarpRenderer();
     const csvRenderer = this.createCsvRenderer();
+    const fileNavigator = this.createFileNavigator(fileService, pathResolver, baseDir);
 
     return new ServerController(
       fileService,
@@ -29,6 +32,7 @@ export class AppFactory {
       markdownRenderer,
       marpRenderer,
       csvRenderer,
+      fileNavigator,
       baseDir
     );
   }
@@ -58,5 +62,13 @@ export class AppFactory {
 
   static createCsvRenderer(): ICsvRenderer {
     return new CsvRenderer();
+  }
+
+  static createFileNavigator(
+    fileService: IFileService,
+    pathResolver: IPathResolver,
+    baseDir: string
+  ): IFileNavigator {
+    return new FileNavigator(fileService, pathResolver, baseDir);
   }
 }
