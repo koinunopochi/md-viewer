@@ -45,39 +45,50 @@ pika [directory] [options]
 
 ### Basic Commands
 
+> **Note**: The commands below assume you have either:
+> - Installed globally: `npm install -g @koinunopochi/pika`
+> - Or are using npx: `npx @koinunopochi/pika` (recommended)
+> - Or running from project directory: `npm start` (requires `--` before arguments)
+
 ```bash
 # View current directory (non-recursive)
 pika
+npx @koinunopochi/pika
+npm start
 
 # View specific directory
 pika /path/to/directory
+npx @koinunopochi/pika /path/to/directory
+npm start -- /path/to/directory        # Note: -- is required for npm start
 
 # Recursive mode - view all subdirectories
 pika . -r
-pika . --recursive
+npx @koinunopochi/pika . -r
+npm start -- . -r                      # Note: -- is required for npm start
 
 # With custom exclude patterns
 pika . -r -e "test.*,__tests__"
-pika . --recursive --exclude "\.test\.,\.spec\."
+npx @koinunopochi/pika . -r -e "test.*,__tests__"
+npm start -- . -r -e "test.*,__tests__"  # Note: -- is required for npm start
 ```
 
 ### Common Use Cases
 
 ```bash
 # 📚 View project documentation
-pika ./docs -r
+npx @koinunopochi/pika ./docs -r
 
 # 🔬 View source code documentation (excluding tests)
-pika ./src -r -e "test,spec,__test__"
+npx @koinunopochi/pika ./src -r -e "test,spec,__test__"
 
 # 📊 View all Markdown files in a project
-pika . -r
+npx @koinunopochi/pika . -r
 
 # 🎨 View presentation slides
-pika ./slides -r
+npx @koinunopochi/pika ./slides -r
 
 # 📝 View blog posts or articles
-pika ./content/posts -r
+npx @koinunopochi/pika ./content/posts -r
 ```
 
 ## 🎯 Command Line Options

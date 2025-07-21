@@ -8,6 +8,8 @@ export class HtmlTemplate {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>${title} - Pika</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/github-markdown-css/5.2.0/github-markdown-light.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/plugins/diff-highlight/prism-diff-highlight.min.css">
     <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
     <style>
         ${this.getStyles()}
@@ -302,6 +304,122 @@ export class HtmlTemplate {
         .chat-parent { background: #e8f5e8; }
         .chat-teacher { background: #fff3e0; }
         .chat-admin { background: #f3e5f5; }
+        /* Prism.js追加スタイル - Zenn風 */
+        .znc pre[class*="language-"] {
+            background: #1e1e1e;
+            color: #d4d4d4;
+            border: none;
+            border-radius: 0 0 8px 8px;
+            margin: 0;
+            padding: 1.5em;
+            overflow-x: auto;
+            font-size: 14px;
+            line-height: 1.6;
+        }
+        .znc pre code {
+            background: none;
+            padding: 0;
+            border: none;
+            border-radius: 0;
+            color: #d4d4d4;
+            font-family: 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, monospace;
+        }
+        /* コードブロックコンテナ */
+        .znc > div:has(> pre[class*="language-"]) {
+            border-radius: 8px;
+            overflow: hidden;
+            margin: 1em 0;
+            border: 1px solid #30363d;
+        }
+        /* Dark theme tokens - VS Code Dark+ 風 */
+        .znc .token.comment,
+        .znc .token.prolog,
+        .znc .token.doctype,
+        .znc .token.cdata {
+            color: #6a9955;
+        }
+        .znc .token.punctuation {
+            color: #d4d4d4;
+        }
+        .znc .token.property,
+        .znc .token.tag,
+        .znc .token.boolean,
+        .znc .token.number,
+        .znc .token.constant,
+        .znc .token.symbol,
+        .znc .token.deleted {
+            color: #569cd6;
+        }
+        .znc .token.selector,
+        .znc .token.attr-name,
+        .znc .token.string,
+        .znc .token.char,
+        .znc .token.builtin,
+        .znc .token.inserted {
+            color: #ce9178;
+        }
+        .znc .token.operator,
+        .znc .token.entity,
+        .znc .token.url,
+        .znc .language-css .token.string,
+        .znc .style .token.string {
+            color: #d4d4d4;
+        }
+        .znc .token.atrule,
+        .znc .token.attr-value,
+        .znc .token.keyword {
+            color: #c586c0;
+        }
+        .znc .token.function,
+        .znc .token.class-name {
+            color: #dcdcaa;
+        }
+        .znc .token.regex,
+        .znc .token.important,
+        .znc .token.variable {
+            color: #9cdcfe;
+        }
+        .znc .token.shebang {
+            color: #569cd6;
+            font-weight: bold;
+        }
+        .znc .token.parameter {
+            color: #9cdcfe;
+        }
+        /* Filename display - Zenn style */
+        .code-block-filename-container {
+            background: #30363d;
+            border-radius: 8px 8px 0 0;
+            padding: 10px 16px;
+            font-size: 13px;
+            border: 1px solid #30363d;
+            border-bottom: 1px solid #484f58;
+            margin: 0;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif;
+        }
+        .code-block-filename {
+            color: #8b949e;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .code-block-filename::before {
+            content: "📄";
+            font-size: 14px;
+        }
+        /* Code block container adjustments */
+        .code-block-container {
+            border: 1px solid #30363d;
+            border-radius: 8px;
+            overflow: hidden;
+            margin: 1em 0;
+            background: #1e1e1e;
+        }
+        .code-block-container pre[class*="language-"] {
+            margin: 0;
+            border: none;
+            border-radius: 0;
+        }
     `;
   }
 
