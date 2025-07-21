@@ -1,11 +1,7 @@
 import { Marp } from '@marp-team/marp-core';
+import { IMarpRenderer, MarpRenderResult } from '../interfaces/IMarpRenderer';
 
-export interface MarpRenderResult {
-  html: string;
-  css: string;
-}
-
-export class MarpRenderer {
+export class MarpRenderer implements IMarpRenderer {
   private marp: Marp;
 
   constructor() {
