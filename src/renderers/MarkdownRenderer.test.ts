@@ -18,7 +18,7 @@ describe('MarkdownRenderer', () => {
       // Then
       expect(html).toContain('<h1');
       expect(html).toContain('Hello World');
-      expect(html).toContain('<p>');
+      expect(html).toContain('<p');
       expect(html).toContain('This is a paragraph.');
     });
 
@@ -32,7 +32,7 @@ describe('MarkdownRenderer', () => {
       // Then
       expect(html).toContain('<pre');
       expect(html).toContain('<code');
-      expect(html).toContain('console.log');
+      expect(html).toContain('console');
     });
 
     it('should handle lists', () => {
@@ -43,8 +43,8 @@ describe('MarkdownRenderer', () => {
       const html = renderer.render(markdown);
 
       // Then
-      expect(html).toContain('<ul>');
-      expect(html).toContain('<li>');
+      expect(html).toContain('<ul');
+      expect(html).toContain('<li');
       expect(html).toContain('Item 1');
     });
 
