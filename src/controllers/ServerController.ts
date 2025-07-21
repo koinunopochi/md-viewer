@@ -5,9 +5,10 @@ import { IPathResolver } from '../interfaces/IPathResolver';
 import { IDirectoryTreeBuilder } from '../interfaces/IDirectoryTreeBuilder';
 import { IMarkdownRenderer } from '../interfaces/IMarkdownRenderer';
 import { IMarpRenderer } from '../interfaces/IMarpRenderer';
+import { IServerController } from '../interfaces/IServerController';
 import { TreeNode } from '../models/TreeNode';
 
-export class ServerController {
+export class ServerController implements IServerController {
   constructor(
     private fileService: IFileService,
     private pathResolver: IPathResolver,
