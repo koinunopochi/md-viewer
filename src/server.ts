@@ -24,6 +24,9 @@ if (customPatterns.length > 0) {
 // 静的ファイル（画像など）の配信
 app.use(express.static(options.targetDir));
 
+// ローカルのJavaScriptライブラリを配信
+app.use('/js', express.static(path.join(__dirname, '../public/js')));
+
 // ServerControllerの作成
 const controller = AppFactory.createServerController(options.targetDir, options.excludePatterns);
 
