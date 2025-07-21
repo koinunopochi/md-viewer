@@ -10,7 +10,7 @@ export class HtmlTemplate {
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/github-markdown-css/5.2.0/github-markdown-light.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/plugins/diff-highlight/prism-diff-highlight.min.css">
-    <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+    <script src="/js/mermaid.min.js"></script>
     <style>
         ${this.getStyles()}
     </style>
@@ -131,10 +131,12 @@ export class HtmlTemplate {
         .mermaid {
             display: block;
             margin: 0 auto;
+            text-align: center;
         }
         .mermaid svg {
-            max-width: none !important;
+            max-width: 100% !important;
             height: auto !important;
+            display: inline-block;
         }
         /* iframe折りたたみ用スタイル */
         .iframe-container {
@@ -654,23 +656,26 @@ export class HtmlTemplate {
                 fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif'
             },
             flowchart: {
-                useMaxWidth: true,
+                useMaxWidth: false,  // Changed to false to prevent extreme expansion
                 htmlLabels: true,
                 curve: 'basis',
                 diagramPadding: 8,
                 rankdir: 'TB'
             },
             sequence: {
-                useMaxWidth: true,
+                useMaxWidth: false,  // Changed to false
                 diagramMarginX: 50,
                 diagramMarginY: 10
             },
             er: {
-                useMaxWidth: true,
+                useMaxWidth: false,  // Changed to false
                 entityPadding: 15,
                 fontSize: 12,
                 minEntityWidth: 100,
                 minEntityHeight: 75
+            },
+            gantt: {
+                useMaxWidth: false
             }
         });
         
