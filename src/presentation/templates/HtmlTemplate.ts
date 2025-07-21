@@ -305,24 +305,36 @@ export class HtmlTemplate {
         .chat-teacher { background: #fff3e0; }
         .chat-admin { background: #f3e5f5; }
         /* Prism.js追加スタイル - Zenn風 */
-        .znc pre[class*="language-"] {
+        /* すべてのpreタグに基本スタイルを適用 */
+        .znc pre {
             background: #1e1e1e;
             color: #d4d4d4;
-            border: none;
-            border-radius: 0 0 8px 8px;
-            margin: 0;
+            border: 1px solid #30363d;
+            border-radius: 8px;
+            margin: 1em 0;
             padding: 1.5em;
             overflow-x: auto;
             font-size: 14px;
             line-height: 1.6;
+            font-family: 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, monospace;
+        }
+        /* 言語指定ありのコードブロック（ファイル名なし） */
+        .znc pre[class*="language-"]:not(.code-block-container pre) {
+            border-radius: 8px;
+        }
+        /* ファイル名付きコードブロック内のpre */
+        .code-block-container pre {
+            border: none;
+            border-radius: 0 0 8px 8px;
+            margin: 0;
         }
         .znc pre code {
             background: none;
             padding: 0;
             border: none;
             border-radius: 0;
-            color: #d4d4d4;
-            font-family: 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, monospace;
+            color: inherit;
+            font-family: inherit;
         }
         /* コードブロックコンテナ */
         .znc > div:has(> pre[class*="language-"]) {
