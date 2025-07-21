@@ -1,0 +1,1 @@
+{"version":3,"file":"IPathResolver.d.ts","sourceRoot":"","sources":["../../src/interfaces/IPathResolver.ts"],"names":[],"mappings":"AAAA,MAAM,WAAW,aAAa;IAC5B,WAAW,CAAC,QAAQ,EAAE,MAAM,GAAG,MAAM,CAAC;IACtC,UAAU,CAAC,QAAQ,EAAE,MAAM,GAAG,OAAO,CAAC;IACtC,eAAe,CAAC,YAAY,EAAE,MAAM,GAAG,MAAM,CAAC;IAC9C,UAAU,CAAC,QAAQ,EAAE,MAAM,GAAG,OAAO,CAAC;CACvC"}

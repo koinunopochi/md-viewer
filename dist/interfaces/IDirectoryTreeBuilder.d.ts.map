@@ -1,0 +1,1 @@
+{"version":3,"file":"IDirectoryTreeBuilder.d.ts","sourceRoot":"","sources":["../../src/interfaces/IDirectoryTreeBuilder.ts"],"names":[],"mappings":"AAAA,OAAO,EAAE,QAAQ,EAAE,MAAM,oBAAoB,CAAC;AAE9C,MAAM,WAAW,qBAAqB;IACpC,SAAS,CAAC,GAAG,EAAE,MAAM,EAAE,SAAS,EAAE,OAAO,GAAG,OAAO,CAAC,QAAQ,CAAC,CAAC;IAC9D,YAAY,CAAC,IAAI,EAAE,QAAQ,GAAG,MAAM,CAAC;CACtC"}
