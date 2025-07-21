@@ -35,27 +35,29 @@ export class MarkdownRenderer implements IMarkdownRenderer {
   }
 
   processImages(markdown: string, baseUrl: string): string {
-    // Process Markdown image syntax ![alt](src)
+    // Process HTML img tags first
     let processed = markdown.replace(
-      /!\[([^\]]*)\]\(([^)]+)\)/g,
-      (match, alt, src) => {
-        if (src.startsWith('http') || src.startsWith('//')) {
+      /<img\s+([^>]*src=")([^"]+)"([^>]*)>/g,
+      (match, prefix, src, suffix) => {
+        if (src.startsWith('http') || src.startsWith('/')) {
           return match;
         }
         const resolvedPath = path.join(baseUrl, src).replace(/\\/g, '/');
-        return `![${alt}](${resolvedPath})`;
+        const normalizedPath = path.normalize(resolvedPath).replace(/\\/g, '/');
+        return `<img ${prefix}/view/${encodeURIComponent(normalizedPath)}"${suffix}>`;
       }
     );
 
-    // Process HTML img tags
+    // Process Markdown image syntax ![alt](src)
     processed = processed.replace(
-      /<img\s+([^>]*src=")([^"]+)"([^>]*)>/g,
-      (match, prefix, src, suffix) => {
-        if (src.startsWith('http') || src.startsWith('//')) {
+      /!\[([^\]]*)\]\(([^)]+)\)/g,
+      (match, alt, src) => {
+        if (src.startsWith('http') || src.startsWith('/')) {
           return match;
         }
         const resolvedPath = path.join(baseUrl, src).replace(/\\/g, '/');
-        return `<img ${prefix}${resolvedPath}"${suffix}>`;
+        const normalizedPath = path.normalize(resolvedPath).replace(/\\/g, '/');
+        return `![${alt}](/view/${encodeURIComponent(normalizedPath)})`;
       }
     );
 

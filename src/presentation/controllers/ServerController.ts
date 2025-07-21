@@ -82,21 +82,79 @@ export class ServerController implements IServerController {
         } else {
           // Render as regular Markdown
           let processedContent = content;
-          const chatConverter = new ChatConverter();
           
-          // Process chat format if any
-          if (chatConverter.isConvertibleChat(processedContent)) {
-            processedContent = chatConverter.processChats(processedContent);
-          }
+          // Store replacements
+          const chatReplacements: Array<{ marker: string; html: string }> = [];
+          const iframeReplacements: Array<{ marker: string; html: string }> = [];
+          
+          // Process chat format and replace with markers
+          const chatConverter = new ChatConverter();
+          let chatIndex = 0;
+          processedContent = processedContent.replace(
+            /<!-- CHAT-CONVERSION-START: ([^>]+) -->([\s\S]*?)<!-- CHAT-CONVERSION-END -->/g,
+            (match, chatId, chatContent) => {
+              const chatHtml = chatConverter.convertChatToHTML(chatId, chatContent);
+              if (chatHtml) {
+                const marker = `[[CHAT_MARKER_${chatIndex}]]`;
+                chatReplacements.push({ marker, html: chatHtml });
+                chatIndex++;
+                return marker;
+              }
+              return match;
+            }
+          );
+          
+          // Process iframe links in markdown and replace with markers
+          let iframeIndex = 0;
+          processedContent = processedContent.replace(
+            /\[([^\]]+)\]\(([^)]+\.(?:html|htm))\)/g,
+            (match, text, htmlPath) => {
+              if (htmlPath.startsWith('http') || htmlPath.startsWith('//')) {
+                return match;
+              }
+              const marker = `[[IFRAME_MARKER_${iframeIndex}]]`;
+              iframeReplacements.push({ 
+                marker, 
+                html: this.generateIframe(htmlPath, text, filename) 
+              });
+              iframeIndex++;
+              return marker;
+            }
+          );
+          
+          // Process explicit iframe tags
+          processedContent = processedContent.replace(
+            /<iframe\s+([^>]*src=")([^"]+)"([^>]*)><\/iframe>/g,
+            (_match, prefix, iframeSrc, suffix) => {
+              const titleMatch = (prefix + suffix).match(/title="([^"]+)"/);
+              const title = titleMatch ? titleMatch[1] : null;
+              const marker = `[[IFRAME_MARKER_${iframeIndex}]]`;
+              iframeReplacements.push({ 
+                marker, 
+                html: this.generateIframe(iframeSrc, title || '', filename) 
+              });
+              iframeIndex++;
+              return marker;
+            }
+          );
           
           // Process images
           processedContent = this.markdownRenderer.processImages(processedContent, path.dirname(filename));
           
-          // Process iframe links
-          processedContent = this.processIframeLinks(processedContent, filename);
-          
           // Render markdown
           let html = this.markdownRenderer.render(processedContent);
+          
+          // Replace markers with actual HTML
+          iframeReplacements.forEach(({ marker, html: iframeHtml }) => {
+            const escapedMarker = marker.replace(/[\[\]]/g, '\\$&');
+            html = html.replace(new RegExp(escapedMarker, 'g'), iframeHtml);
+          });
+          
+          // Replace chat markers with actual HTML
+          chatReplacements.forEach(({ marker, html: chatHtml }) => {
+            const escapedMarker = marker.replace(/[\[\]]/g, '\\$&');
+            html = html.replace(new RegExp(escapedMarker, 'g'), chatHtml);
+          });
           
           // Process HTML links that might have been generated
           html = this.processHtmlIframeLinks(html, filename);
@@ -281,88 +339,6 @@ export class ServerController implements IServerController {
     return html;
   }
 
-  private wrapInTemplate(title: string, content: string): string {
-    return `<!DOCTYPE html>
-<html lang="ja">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>${title} - Pika</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/github-markdown-css/5.2.0/github-markdown-light.min.css">
-    <style>
-        body {
-            margin: 0;
-            padding: 20px;
-            max-width: 1200px;
-            margin: 0 auto;
-        }
-        .markdown-body {
-            box-sizing: border-box;
-            min-width: 200px;
-            max-width: 100%;
-            padding: 45px;
-        }
-        .file-list {
-            background: #f6f8fa;
-            border: 1px solid #d1d9e0;
-            border-radius: 6px;
-            padding: 20px;
-            margin-bottom: 20px;
-        }
-        .file-list h2 {
-            margin-top: 0;
-        }
-        .file-list ul {
-            list-style: none;
-            padding: 0;
-            margin: 0;
-        }
-        .tree-root {
-            padding-left: 0 !important;
-        }
-        .file-list li {
-            padding: 3px 0;
-            line-height: 1.5;
-        }
-        .file-list li.directory {
-            font-weight: 500;
-        }
-        .file-list .file-sublist {
-            margin: 0;
-            padding-left: 20px;
-        }
-        .file-list li.file {
-            font-weight: normal;
-        }
-        .file-list a {
-            text-decoration: none;
-            color: #0969da;
-        }
-        .file-list a:hover {
-            text-decoration: underline;
-        }
-        .file-count {
-            color: #666;
-            font-size: 0.9em;
-            font-weight: normal;
-        }
-        .back-link {
-            display: inline-block;
-            margin-bottom: 20px;
-            color: #0969da;
-            text-decoration: none;
-        }
-        .back-link:hover {
-            text-decoration: underline;
-        }
-    </style>
-</head>
-<body>
-    ${content.includes('class="file-list"') ? '' : '<a href="/" class="back-link">← Back to file list</a>'}
-    ${content.includes('class="markdown-body"') ? content : `<div class="markdown-body">${content}</div>`}
-</body>
-</html>`;
-  }
 
   private wrapHtmlFile(filename: string, _content: string): string {
     const backLink = '<a href="/" class="back-link">← Back to file list</a>';
@@ -384,35 +360,6 @@ export class ServerController implements IServerController {
     return ['.jpg', '.jpeg', '.png', '.gif', '.svg', '.webp'].includes(ext);
   }
 
-  private processIframeLinks(markdown: string, currentFile: string): string {
-    let iframeCounter = 0;
-    const iframeReplacements: Array<{ marker: string; html: string }> = [];
-    
-    // Process markdown links to HTML files
-    let processed = markdown.replace(
-      /\[([^\]]+)\]\(([^)]+\.(?:html|htm))\)/g,
-      (match, text, htmlPath) => {
-        if (htmlPath.startsWith('http') || htmlPath.startsWith('//')) {
-          return match;
-        }
-        const marker = `[[IFRAME_MARKER_${iframeCounter}]]`;
-        iframeReplacements.push({ 
-          marker, 
-          html: this.generateIframe(htmlPath, text, currentFile) 
-        });
-        iframeCounter++;
-        return marker;
-      }
-    );
-    
-    // Replace markers with actual HTML
-    iframeReplacements.forEach(({ marker, html }) => {
-      const escapedMarker = marker.replace(/[\[\]]/g, '\\$&');
-      processed = processed.replace(new RegExp(escapedMarker, 'g'), html);
-    });
-    
-    return processed;
-  }
 
   private processHtmlIframeLinks(html: string, currentFile: string): string {
     
