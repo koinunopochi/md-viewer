@@ -16,7 +16,12 @@ export class DirectoryTreeBuilder implements IDirectoryTreeBuilder {
     const rootNode = new TreeNode(dirName, 'directory', '');
     
     try {
-      await this.buildTreeRecursive(dir, dir, rootNode, recursive);
+      if (recursive) {
+        await this.buildTreeRecursive(dir, dir, rootNode, recursive);
+      } else {
+        // Non-recursive mode: only process files in root directory
+        await this.buildRootFiles(dir, rootNode);
+      }
     } catch (error) {
       // Return empty tree on error
       console.error(`Error building tree for ${dir}:`, error);
@@ -79,5 +84,26 @@ export class DirectoryTreeBuilder implements IDirectoryTreeBuilder {
     return node.children.reduce((count, child) => {
       return count + this.getFileCount(child);
     }, 0);
+  }
+
+  private async buildRootFiles(dir: string, rootNode: TreeNode): Promise<void> {
+    try {
+      const entries = await fs.readdir(dir, { withFileTypes: true });
+      
+      for (const entry of entries) {
+        if (this.pathResolver.isExcluded(entry.name)) {
+          continue;
+        }
+        
+        if (entry.isFile() && 
+            (this.fileService.isMarkdownFile(entry.name) || 
+             this.fileService.isHtmlFile(entry.name))) {
+          const fileNode = new TreeNode(entry.name, 'file', entry.name);
+          rootNode.addChild(fileNode);
+        }
+      }
+    } catch (error) {
+      console.error(`Error reading directory ${dir}:`, error);
+    }
   }
 }

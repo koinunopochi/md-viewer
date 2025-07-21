@@ -102,11 +102,11 @@ export class MarpRenderer implements IMarpRenderer {
             ${html}
         </div>
         <div class="slide-navigation">
-            <button id="prevSlide">← Previous</button>
+            <button id="prevSlide">← 前へ</button>
             <span class="slide-counter">
                 <span id="currentSlide">1</span> / <span id="totalSlides">1</span>
             </span>
-            <button id="nextSlide">Next →</button>
+            <button id="nextSlide">次へ →</button>
         </div>
     </div>
     <script>

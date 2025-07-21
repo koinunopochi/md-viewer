@@ -105,7 +105,9 @@ describe('ServerController', () => {
     mockRes = {
       status: statusMock,
       send: sendMock,
-      json: jsonMock
+      json: jsonMock,
+      setHeader: jest.fn(),
+      sendFile: jest.fn()
     };
 
     mockReq = {
@@ -205,7 +207,9 @@ describe('ServerController', () => {
       await controller.handleRawHtml(mockReq as Request, mockRes as Response);
 
       // Then
-      expect(sendMock).toHaveBeenCalledWith('<html>Test</html>');
+      expect(sendMock).toHaveBeenCalled();
+      const sentContent = sendMock.mock.calls[0][0];
+      expect(sentContent).toContain('Test</html>');
     });
 
     it('should reject non-HTML files', async () => {

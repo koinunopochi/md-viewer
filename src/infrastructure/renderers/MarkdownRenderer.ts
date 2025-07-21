@@ -5,7 +5,21 @@ import { IMarkdownRenderer } from '../../domain/interfaces/IMarkdownRenderer';
 
 export class MarkdownRenderer implements IMarkdownRenderer {
   render(markdown: string): string {
-    return markdownToHtml(markdown);
+    return markdownToHtml(markdown, {
+      customEmbed: {
+        mermaid(content: string) {
+          // 一意のIDを生成
+          const id = `mermaid-${Math.random().toString(36).substr(2, 9)}`;
+          
+          // 直接divタグとして埋め込む
+          return `
+            <div class="mermaid-wrapper">
+              <div class="mermaid" id="${id}">${content}</div>
+            </div>
+          `;
+        }
+      }
+    });
   }
 
   isMarpDocument(markdown: string): boolean {
