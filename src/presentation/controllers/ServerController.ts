@@ -46,6 +46,9 @@ export class ServerController implements IServerController {
       if (this.isImageFile(filename)) {
         // Check file exists first
         if (!(await this.fileService.fileExists(filePath))) {
+          console.error(`Image file not found: ${filePath}`);
+          console.error(`Requested filename: ${filename}`);
+          console.error(`Base directory: ${this.baseDir}`);
           res.status(404).send('Image file not found');
           return;
         }
