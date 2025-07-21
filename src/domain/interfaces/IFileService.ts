@@ -4,4 +4,5 @@ export interface IFileService {
   isMarkdownFile(filePath: string): boolean;
   isHtmlFile(filePath: string): boolean;
   isCsvFile(filePath: string): boolean;
+  isImageFile(filePath: string): boolean;
 }

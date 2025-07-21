@@ -30,4 +30,9 @@ export class FileService implements IFileService {
     const ext = path.extname(filePath).toLowerCase();
     return ext === '.csv';
   }
+
+  isImageFile(filePath: string): boolean {
+    const ext = path.extname(filePath).toLowerCase();
+    return ['.jpg', '.jpeg', '.png', '.gif', '.svg', '.webp', '.bmp', '.ico'].includes(ext);
+  }
 }

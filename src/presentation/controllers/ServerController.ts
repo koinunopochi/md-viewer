@@ -45,7 +45,7 @@ export class ServerController implements IServerController {
       const filePath = this.pathResolver.resolvePath(filename);
       
       // Check if it's an image file
-      if (this.isImageFile(filename)) {
+      if (this.fileService.isImageFile(filename)) {
         // Check file exists first
         if (!(await this.fileService.fileExists(filePath))) {
           console.error(`Image file not found: ${filePath}`);
@@ -266,7 +266,7 @@ export class ServerController implements IServerController {
       <div class="file-list">
         <h2>Document Files</h2>
         <p>📁 Directory: ${this.baseDir}</p>
-        <p>✅ View Markdown, HTML, and CSV files</p>
+        <p>✅ View Markdown, HTML, CSV, and Image files</p>
         <p>✅ Direct Mermaid rendering without iframes</p>
         ${recursive ? '<p>🔄 Recursive search: Enabled</p>' : ''}
         <p>💡 Click directories to expand/collapse</p>
@@ -343,8 +343,17 @@ export class ServerController implements IServerController {
         html += '</li>';
       }
     } else if (node.type === 'file') {
-      const icon = node.name.endsWith('.md') ? '📝' : 
-                   node.name.endsWith('.csv') ? '📊' : '🌐';
+      let icon = '📄';
+      if (node.name.endsWith('.md')) {
+        icon = '📝';
+      } else if (node.name.endsWith('.csv')) {
+        icon = '📊';
+      } else if (this.fileService.isImageFile(node.name)) {
+        icon = '🖼️';
+      } else if (this.fileService.isHtmlFile(node.name)) {
+        icon = '🌐';
+      }
+      
       html += `<li class="file" style="padding-left: ${depth * 20}px">
         <span style="width: 12px; display: inline-block;"></span>
         ${icon} <a href="/view/${encodeURIComponent(node.relativePath)}">${node.name}</a>
@@ -370,10 +379,6 @@ export class ServerController implements IServerController {
     return HtmlTemplate.generate(filename, backLink + iframeContent);
   }
 
-  private isImageFile(filename: string): boolean {
-    const ext = path.extname(filename).toLowerCase();
-    return ['.jpg', '.jpeg', '.png', '.gif', '.svg', '.webp'].includes(ext);
-  }
 
 
   private processHtmlIframeLinks(html: string, currentFile: string): string {
