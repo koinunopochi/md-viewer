@@ -6,7 +6,7 @@ import { AppFactory } from './presentation/factories/AppFactory';
 import { CliParser } from './application/services/CliParser';
 
 const app = express();
-const PORT = 15559;
+const PORT = process.env.PORT ? parseInt(process.env.PORT, 10) : 15559;
 
 // コマンドライン引数の解析
 const cliParser = new CliParser();
@@ -44,20 +44,25 @@ app.get('/raw/:filename(*)', async (req, res) => {
 
 // サーバー起動
 app.listen(PORT, () => {
-  console.log(`\n🐾 Pika is running!`);
-  console.log(`📍 URL: http://localhost:${PORT}`);
-  console.log(`📁 Target directory: ${options.targetDir}`);
-  console.log(`🔄 Recursive: ${options.recursive}`);
-  console.log(`\n📝 Usage:`);
-  console.log(`1. Open http://localhost:${PORT} in your browser`);
-  console.log(`2. Click on any Markdown/HTML file to view`);
-  console.log(`\n💡 Examples:`);
-  console.log(`   pika /path/to/directory`);
-  console.log(`   pika /path/to/directory --recursive`);
-  console.log(`   pika /path/to/directory --recursive --exclude "test.*,__tests__"`);
-  console.log(`   pika . --recursive  # Recursively browse current directory`);
-  console.log(`\n✅ Supports Markdown and HTML files`);
-  console.log(`✅ Direct Mermaid diagram rendering`);
-  console.log(`✅ Collapsible iframe UI`);
-  console.log(`\n⏹  Stop: Ctrl+C`);
+  console.log(`
+🐾 Pika is running!
+
+📍 URL: http://localhost:${PORT}
+📁 Directory: ${options.targetDir}
+🔄 Mode: ${options.recursive ? 'Recursive' : 'Current directory only'}
+
+✨ Features:
+  • Markdown rendering with GitHub style
+  • Mermaid diagrams without iframes
+  • Marp presentations with navigation
+  • HTML files with smart embedding
+  • Chat format support
+
+💡 Tips:
+  • Use -h or --help for usage information
+  • Use -r for recursive directory browsing
+  • Custom port: PORT=3000 pika .
+
+⏹  Stop: Press Ctrl+C
+  `.trim());
 });

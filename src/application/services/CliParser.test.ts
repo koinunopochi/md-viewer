@@ -4,9 +4,18 @@ import * as path from 'path';
 describe('CliParser', () => {
   let parser: CliParser;
   const originalCwd = process.cwd();
+  const originalExit = process.exit;
+  const originalLog = console.log;
 
   beforeEach(() => {
     parser = new CliParser();
+    process.exit = jest.fn() as any;
+    console.log = jest.fn();
+  });
+
+  afterEach(() => {
+    process.exit = originalExit;
+    console.log = originalLog;
   });
 
   describe('parse', () => {
@@ -105,6 +114,54 @@ describe('CliParser', () => {
       expect(options.targetDir).toBe(path.resolve('/my/path'));
       expect(options.recursive).toBe(true);
       expect(options.excludePatterns.some(p => p.source === 'test.*')).toBe(true);
+    });
+
+    it('should show help when --help flag is used', () => {
+      // Given
+      const args = ['node', 'script.js', '--help'];
+
+      // When
+      parser.parse(args);
+
+      // Then
+      expect(process.exit).toHaveBeenCalledWith(0);
+      expect(console.log).toHaveBeenCalledWith(expect.stringContaining('Pika - Lightning-fast document viewer'));
+    });
+
+    it('should show help when -h flag is used', () => {
+      // Given
+      const args = ['node', 'script.js', '-h'];
+
+      // When
+      parser.parse(args);
+
+      // Then
+      expect(process.exit).toHaveBeenCalledWith(0);
+      expect(console.log).toHaveBeenCalledWith(expect.stringContaining('Pika - Lightning-fast document viewer'));
+    });
+
+    it('should show version when --version flag is used', () => {
+      // Given
+      const args = ['node', 'script.js', '--version'];
+
+      // When
+      parser.parse(args);
+
+      // Then
+      expect(process.exit).toHaveBeenCalledWith(0);
+      expect(console.log).toHaveBeenCalledWith(expect.stringContaining('Pika v'));
+    });
+
+    it('should show version when -v flag is used', () => {
+      // Given
+      const args = ['node', 'script.js', '-v'];
+
+      // When
+      parser.parse(args);
+
+      // Then
+      expect(process.exit).toHaveBeenCalledWith(0);
+      expect(console.log).toHaveBeenCalledWith(expect.stringContaining('Pika v'));
     });
   });
 });

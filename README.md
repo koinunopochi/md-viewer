@@ -1,23 +1,37 @@
 # Pika 🐾
 
-A fast document viewer for Markdown, HTML, and more - peek at your files like a pika!
+A lightning-fast local document viewer for Markdown, HTML, and more - peek at your files like a pika!
 
-## Features
+![Version](https://img.shields.io/badge/version-0.1.0-blue)
+![Node](https://img.shields.io/badge/node-%3E%3D14.0.0-green)
+![License](https://img.shields.io/badge/license-MIT-yellow)
 
-- 📝 View Markdown files with beautiful GitHub-style rendering
-- 🌐 Display HTML files with iframe embedding
-- 📊 Direct Mermaid diagram rendering (no iframe)
-- 🎨 Marp presentation support
-- 📁 Recursive directory browsing
-- 🔍 File filtering with exclude patterns
-- 💬 Chat format conversion support
+## ✨ Features
 
-## Installation
+- 📝 **Markdown Viewer** - Beautiful GitHub-style rendering with zenn-markdown-html
+- 🌐 **HTML Support** - Display HTML files with smart iframe embedding
+- 📊 **Mermaid Diagrams** - Direct rendering without iframes
+- 🎨 **Marp Presentations** - Full support for slide presentations
+- 📁 **Smart Directory Browser** - Recursive browsing with collapsible tree view
+- 🔍 **Flexible Filtering** - Exclude patterns with regex support
+- 💬 **Chat Format** - Special rendering for conversation-style content
+- 🖼️ **Image Support** - Automatic path resolution for local images
+- ⚡ **Lightning Fast** - Local server for instant file viewing
+- 🎯 **Zero Config** - Works out of the box with sensible defaults
 
-### Using npx (Recommended)
+## 🚀 Quick Start
+
+### Using npx (Recommended - No Installation Required!)
 
 ```bash
-npx @koinunopochi/pika [directory] [options]
+# View current directory
+npx @koinunopochi/pika
+
+# View specific directory
+npx @koinunopochi/pika /path/to/docs
+
+# View recursively
+npx @koinunopochi/pika . -r
 ```
 
 ### Global Installation
@@ -27,103 +41,214 @@ npm install -g @koinunopochi/pika
 pika [directory] [options]
 ```
 
-### Local Development
+## 📖 Usage
+
+### Basic Commands
 
 ```bash
-git clone https://github.com/koinunopochi/pika.git
-cd pika
-npm install
-npm start
+# View current directory (non-recursive)
+pika
+
+# View specific directory
+pika /path/to/directory
+
+# Recursive mode - view all subdirectories
+pika . -r
+pika . --recursive
+
+# With custom exclude patterns
+pika . -r -e "test.*,__tests__"
+pika . --recursive --exclude "\.test\.,\.spec\."
 ```
 
-## Usage
-
-### Basic Usage
+### Common Use Cases
 
 ```bash
-# View files in current directory
-npx @koinunopochi/pika
+# 📚 View project documentation
+pika ./docs -r
 
-# View files in specific directory
-npx @koinunopochi/pika /path/to/directory
+# 🔬 View source code documentation (excluding tests)
+pika ./src -r -e "test,spec,__test__"
 
-# Recursive search
-npx @koinunopochi/pika /path/to/directory --recursive
-npx @koinunopochi/pika . -r
+# 📊 View all Markdown files in a project
+pika . -r
+
+# 🎨 View presentation slides
+pika ./slides -r
+
+# 📝 View blog posts or articles
+pika ./content/posts -r
 ```
 
-### Advanced Options
+## 🎯 Command Line Options
 
-```bash
-# Exclude patterns (regex)
-npx @koinunopochi/pika . --recursive --exclude "test.*,__tests__"
-npx @koinunopochi/pika . -r -e "\.test\.,\.spec\."
-```
-
-### Examples
-
-```bash
-# View all Markdown files in current directory recursively
-npx @koinunopochi/pika . --recursive
-
-# View documentation excluding test files
-npx @koinunopochi/pika ./docs --recursive --exclude "test,spec,__"
-
-# View project root excluding common build directories
-npx @koinunopochi/pika . -r
-```
-
-## Features in Detail
-
-### Markdown Rendering
-- Uses zenn-markdown-html for high-quality rendering
-- GitHub-flavored Markdown support
-- Syntax highlighting for code blocks
-- Task lists, tables, and more
-
-### Mermaid Diagrams
-- Direct rendering without iframes
-- Supports flowcharts, sequence diagrams, ER diagrams, etc.
-- Auto-resizing and proper styling
-
-### Marp Presentations
-- Detects Marp-formatted Markdown files (with `marp: true` in frontmatter)
-- Slide navigation with keyboard arrows
-- Full-screen presentation mode
-
-### HTML File Support
-- Embeds HTML files in collapsible iframes
-- Preserves relative paths for assets
-- Seamless navigation within embedded content
-
-### Directory Browsing
-- Tree-view file listing
-- Collapsible directories
-- File count display
-- Persistent collapse state
+| Option | Alias | Description | Default |
+|--------|-------|-------------|---------|
+| `[directory]` | - | Target directory to view | Current directory (`.`) |
+| `--recursive` | `-r` | Include subdirectories | `false` |
+| `--exclude` | `-e` | Comma-separated regex patterns to exclude | See default exclusions |
+| `--help` | `-h` | Show help message | - |
+| `--version` | `-v` | Show version number | - |
 
 ### Default Exclusions
-The following directories are excluded by default:
-- node_modules
-- .git
-- .next
-- dist
-- build
-- coverage
-- .cache
-- .vscode
-- .idea
 
-## Server Details
+These directories are always excluded to improve performance:
+- `node_modules`
+- `.git`
+- `.next`
+- `dist`
+- `build`
+- `coverage`
+- `.cache`
+- `.vscode`
+- `.idea`
 
-- **Port**: 15559
-- **Access**: http://localhost:15559
-- **Stop**: Ctrl+C
+## 🌟 Features in Detail
 
-## Version
+### 📝 Markdown Rendering
+- **GitHub-Flavored Markdown** - Full GFM support
+- **Syntax Highlighting** - Beautiful code blocks with language detection
+- **Task Lists** - Interactive checkboxes
+- **Tables** - Responsive table rendering
+- **Footnotes** - Elegant footnote support
+- **Emoji** - Full emoji support 😄
 
-Current version: 0.1.0
+### 📊 Mermaid Diagrams
+```mermaid
+graph TD
+    A[Start] --> B{Is it working?}
+    B -->|Yes| C[Great!]
+    B -->|No| D[Check the docs]
+```
+- Flowcharts, sequence diagrams, Gantt charts, and more
+- Auto-sizing and responsive design
+- No iframe overhead
 
-## License
+### 🎨 Marp Presentations
+```markdown
+---
+marp: true
+theme: default
+---
 
-MIT
+# Your Presentation
+
+Slides with style!
+```
+- Auto-detection of Marp documents
+- Keyboard navigation (← →)
+- Slide counter
+- Full-screen optimized
+
+### 🌐 HTML File Support
+- Smart iframe embedding
+- Collapsible UI to save space
+- Preserves relative links and assets
+- Sandbox security
+
+### 📁 Directory Browser
+- **Tree View** - Intuitive file organization
+- **Collapsible Folders** - Click to expand/collapse
+- **File Counts** - See how many files in each folder
+- **State Persistence** - Remembers your expanded folders
+- **Smart Icons** - 📝 for Markdown, 🌐 for HTML
+
+### 💬 Chat Format Support
+Transform specially formatted content into beautiful chat UIs:
+```markdown
+<!-- CHAT-CONVERSION-START: discussion-1 -->
+[CHAT-DATA-BEGIN]
+👤 User 10:30
+How does this work?
+[emotion: curious]
+[tags: question,feature]
+---
+👩‍🏫 Support 10:32
+It automatically converts your formatted text into a chat interface!
+[emotion: helpful]
+[tags: answer,demo]
+[CHAT-DATA-END]
+<!-- CHAT-CONVERSION-END -->
+```
+
+## ⚙️ Configuration
+
+### Port Configuration
+Default port: `15559`
+
+To use a different port:
+```bash
+PORT=3000 pika .
+```
+
+### Advanced Exclude Patterns
+Exclude patterns use JavaScript regex:
+```bash
+# Exclude test files
+pika . -r -e "\.test\.|\.spec\.|__tests__"
+
+# Exclude multiple patterns
+pika . -r -e "\.test\.,\.tmp\.,\.cache"
+
+# Exclude by file extension
+pika . -r -e "\.log$|\.tmp$"
+```
+
+## 🏗️ Architecture
+
+Pika is built with:
+- **TypeScript** - Type-safe codebase
+- **Express.js** - Fast, minimal web server
+- **Clean Architecture** - Maintainable and testable design
+- **TDD** - Test-driven development with >85% coverage
+
+```
+src/
+├── domain/        # Business entities and interfaces
+├── application/   # Use cases and services
+├── infrastructure/# Technical implementations
+└── presentation/  # Web UI and controllers
+```
+
+## 🤝 Contributing
+
+Contributions are welcome! Please feel free to submit a Pull Request.
+
+1. Fork the repository
+2. Create your feature branch (`git checkout -b feature/AmazingFeature`)
+3. Commit your changes (`git commit -m 'Add some AmazingFeature'`)
+4. Push to the branch (`git push origin feature/AmazingFeature`)
+5. Open a Pull Request
+
+## 🐛 Troubleshooting
+
+### Common Issues
+
+**Port already in use**
+```bash
+# Kill the process using port 15559
+lsof -ti:15559 | xargs kill -9
+```
+
+**Permission denied**
+```bash
+# Make sure the file is executable
+chmod +x ./dist/server.js
+```
+
+**Images not loading**
+- Ensure image paths are relative to the Markdown file
+- Check that image files exist in the specified location
+
+## 📜 License
+
+MIT © [koinunopochi](https://github.com/koinunopochi)
+
+---
+
+<p align="center">Made with ❤️ by developers, for developers</p>
+<p align="center">
+  <a href="https://github.com/koinunopochi/pika">GitHub</a> •
+  <a href="https://github.com/koinunopochi/pika/issues">Issues</a> •
+  <a href="https://www.npmjs.com/package/@koinunopochi/pika">npm</a>
+</p>
