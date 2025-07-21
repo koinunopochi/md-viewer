@@ -1,6 +1,7 @@
 import * as path from 'path';
+import { IPathResolver } from '../interfaces/IPathResolver';
 
-export class PathResolver {
+export class PathResolver implements IPathResolver {
   private baseDir: string;
   private excludePatterns: RegExp[];
   private defaultExcludePatterns: RegExp[] = [
