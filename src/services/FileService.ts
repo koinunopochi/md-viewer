@@ -1,7 +1,8 @@
 import * as fs from 'fs/promises';
 import * as path from 'path';
+import { IFileService } from '../interfaces/IFileService';
 
-export class FileService {
+export class FileService implements IFileService {
   async readFile(filePath: string): Promise<string> {
     return await fs.readFile(filePath, 'utf-8');
   }
