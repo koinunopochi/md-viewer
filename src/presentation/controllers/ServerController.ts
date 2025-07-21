@@ -44,7 +44,17 @@ export class ServerController implements IServerController {
       
       // Check if it's an image file
       if (this.isImageFile(filename)) {
-        res.sendFile(filePath);
+        // Check file exists first
+        if (!(await this.fileService.fileExists(filePath))) {
+          res.status(404).send('Image file not found');
+          return;
+        }
+        res.sendFile(filePath, (err) => {
+          if (err) {
+            console.error(`Error sending file ${filePath}:`, err);
+            res.status(404).send('File not found');
+          }
+        });
         return;
       }
       
@@ -98,6 +108,16 @@ export class ServerController implements IServerController {
         }
       } else {
         // Handle HTML files
+        // Check if request is from iframe
+        const referer = req.get('referer');
+        const isFromIframe = referer && referer.includes('/raw/');
+        
+        if (isFromIframe) {
+          // Redirect to raw HTML endpoint for iframe navigation
+          res.redirect(`/raw/${encodeURIComponent(filename)}`);
+          return;
+        }
+        
         const fullHtml = this.wrapHtmlFile(filename, content);
         res.send(fullHtml);
       }
@@ -344,15 +364,19 @@ export class ServerController implements IServerController {
 </html>`;
   }
 
-  private wrapHtmlFile(filename: string, content: string): string {
-    return this.wrapInTemplate(filename, `
+  private wrapHtmlFile(filename: string, _content: string): string {
+    const backLink = '<a href="/" class="back-link">← Back to file list</a>';
+    const iframeContent = `
       <div style="border: 1px solid #d1d9e0; border-radius: 6px; margin: 20px 0;">
         <iframe 
+          id="content-frame"
           src="/raw/${encodeURIComponent(filename)}" 
           style="width: 100%; height: calc(100vh - 100px); border: none; border-radius: 6px;"
+          sandbox="allow-scripts allow-same-origin allow-top-navigation"
         ></iframe>
       </div>
-    `);
+    `;
+    return HtmlTemplate.generate(filename, backLink + iframeContent);
   }
 
   private isImageFile(filename: string): boolean {
@@ -391,7 +415,6 @@ export class ServerController implements IServerController {
   }
 
   private processHtmlIframeLinks(html: string, currentFile: string): string {
-    let iframeCounter = 0;
     
     // Process HTML links but skip iframe-link class
     return html.replace(
@@ -409,7 +432,7 @@ export class ServerController implements IServerController {
   }
 
   private generateIframe(src: string, title: string, currentFile: string): string {
-    const iframeId = `iframe-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
+    const iframeId = `iframe-${Date.now()}-${Math.random().toString(36).substring(2, 11)}`;
     
     // Resolve relative paths
     let resolvedSrc = src;
