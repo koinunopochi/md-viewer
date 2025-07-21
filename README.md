@@ -1,72 +1,129 @@
-# Markdown Viewer
+# Pika 🐾
 
-zenn-markdown-htmlを使用したシンプルなMarkdownビューアーです。
+A fast document viewer for Markdown, HTML, and more - peek at your files like a pika!
 
-## 機能
+## Features
 
-- DB移行ディレクトリ内のMarkdownファイルをブラウザで表示
-- Zennスタイルの美しいレンダリング
-- ファイル一覧から選択して表示
-- 埋め込みコンテンツ対応（Twitter、YouTube等）
+- 📝 View Markdown files with beautiful GitHub-style rendering
+- 🌐 Display HTML files with iframe embedding
+- 📊 Direct Mermaid diagram rendering (no iframe)
+- 🎨 Marp presentation support
+- 📁 Recursive directory browsing
+- 🔍 File filtering with exclude patterns
+- 💬 Chat format conversion support
 
-## 使い方
+## Installation
 
-### 通常版（埋め込み対応）
+### Using npx (Recommended)
+
 ```bash
-# 起動（ポート15555）
+npx @koinunopochi/pika [directory] [options]
+```
+
+### Global Installation
+
+```bash
+npm install -g @koinunopochi/pika
+pika [directory] [options]
+```
+
+### Local Development
+
+```bash
+git clone https://github.com/koinunopochi/pika.git
+cd pika
+npm install
 npm start
-
-# ブラウザで開く
-open http://localhost:15555
 ```
 
-### シンプル版（Mermaidの問題回避）
+## Usage
+
+### Basic Usage
+
 ```bash
-# 起動（ポート15556）
-npm run simple
+# View files in current directory
+npx @koinunopochi/pika
 
-# ブラウザで開く
-open http://localhost:15556
+# View files in specific directory
+npx @koinunopochi/pika /path/to/directory
+
+# Recursive search
+npx @koinunopochi/pika /path/to/directory --recursive
+npx @koinunopochi/pika . -r
 ```
 
-### ローカル版（完全自立型）⭐️推奨
+### Advanced Options
+
 ```bash
-# 起動（ポート15558 + Mermaidサーバー15557）
-npm run local
-
-# ブラウザで開く
-open http://localhost:15558
+# Exclude patterns (regex)
+npx @koinunopochi/pika . --recursive --exclude "test.*,__tests__"
+npx @koinunopochi/pika . -r -e "\.test\.,\.spec\."
 ```
 
-## 3つのバージョンの違い
+### Examples
 
-### 通常版 (`npm start`)
-- **ポート**: 15555
-- **埋め込み**: 対応（Twitter、YouTube等）
-- **Mermaid**: Zennの埋め込みサーバー使用
-- **用途**: 一般的なMarkdownファイル表示
+```bash
+# View all Markdown files in current directory recursively
+npx @koinunopochi/pika . --recursive
 
-### シンプル版 (`npm run simple`)
-- **ポート**: 15556
-- **埋め込み**: 非対応
-- **Mermaid**: コードブロックとして表示
-- **用途**: 埋め込み機能を使わない場合
+# View documentation excluding test files
+npx @koinunopochi/pika ./docs --recursive --exclude "test,spec,__"
 
-### ローカル版 (`npm run local`) ⭐️推奨
-- **ポート**: 15558 (Mermaidサーバー: 15557)
-- **埋め込み**: Mermaidのみローカル対応
-- **Mermaid**: 自前サーバーで完全描画
-- **用途**: 外部サービスに依存せずMermaid表示
+# View project root excluding common build directories
+npx @koinunopochi/pika . -r
+```
 
-## 仕組み
+## Features in Detail
 
-1. Expressサーバーが起動
-2. `/` - MDファイル一覧を表示
-3. `/view/:filename` - 選択したMDファイルをHTMLに変換して表示
+### Markdown Rendering
+- Uses zenn-markdown-html for high-quality rendering
+- GitHub-flavored Markdown support
+- Syntax highlighting for code blocks
+- Task lists, tables, and more
 
-## 注意事項
+### Mermaid Diagrams
+- Direct rendering without iframes
+- Supports flowcharts, sequence diagrams, ER diagrams, etc.
+- Auto-resizing and proper styling
 
-- 一時的な表示用ツールです
-- DB移行ディレクトリ内のMDファイルのみ表示可能
-- セキュリティのため、相対パス遡りは禁止されています
-- **推奨**: ローカル版（外部サービス非依存でMermaid完全対応）
+### Marp Presentations
+- Detects Marp-formatted Markdown files (with `marp: true` in frontmatter)
+- Slide navigation with keyboard arrows
+- Full-screen presentation mode
+
+### HTML File Support
+- Embeds HTML files in collapsible iframes
+- Preserves relative paths for assets
+- Seamless navigation within embedded content
+
+### Directory Browsing
+- Tree-view file listing
+- Collapsible directories
+- File count display
+- Persistent collapse state
+
+### Default Exclusions
+The following directories are excluded by default:
+- node_modules
+- .git
+- .next
+- dist
+- build
+- coverage
+- .cache
+- .vscode
+- .idea
+
+## Server Details
+
+- **Port**: 15559
+- **Access**: http://localhost:15559
+- **Stop**: Ctrl+C
+
+## Version
+
+Current version: 0.1.0
+
+## License
+
+MIT

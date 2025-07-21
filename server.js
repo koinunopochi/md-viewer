@@ -1,3 +1,5 @@
+#!/usr/bin/env node
+
 const express = require('express');
 const fs = require('fs').promises;
 const path = require('path');
@@ -64,7 +66,7 @@ const htmlTemplate = (title, content) => `
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>${title}</title>
+    <title>${title} - Pika</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/github-markdown-css/5.2.0/github-markdown-light.min.css">
     <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
     <style>
@@ -631,13 +633,13 @@ app.get('/', async (req, res) => {
         
         const content = `
             <div class="file-list">
-                <h2>Markdown/HTMLファイル一覧</h2>
-                <p>📁 ディレクトリ: ${targetDir}</p>
-                <p>✅ MarkdownとHTMLファイルを表示できます</p>
-                <p>✅ Mermaidをiframe無しで直接描画します</p>
-                ${recursive ? '<p>🔄 再帰的検索: 有効</p>' : ''}
-                ${excludePatterns.length > 0 ? `<p>🚫 カスタム除外パターン: ${excludePatterns.map(p => p.source).join(', ')}</p>` : ''}
-                <p>💡 ディレクトリをクリックして展開/折りたたみ</p>
+                <h2>Document Files</h2>
+                <p>📁 Directory: ${targetDir}</p>
+                <p>✅ View Markdown and HTML files</p>
+                <p>✅ Direct Mermaid rendering without iframes</p>
+                ${recursive ? '<p>🔄 Recursive search: Enabled</p>' : ''}
+                ${excludePatterns.length > 0 ? `<p>🚫 Custom exclude patterns: ${excludePatterns.map(p => p.source).join(', ')}</p>` : ''}
+                <p>💡 Click directories to expand/collapse</p>
                 ${fileList}
             </div>
             <script>
@@ -675,7 +677,7 @@ app.get('/', async (req, res) => {
             </script>
         `;
         
-        res.send(htmlTemplate('Markdown/HTML Viewer', content));
+        res.send(htmlTemplate('Pika Document Viewer', content));
     } catch (error) {
         res.status(500).send(`Error: ${error.message}`);
     }
@@ -709,7 +711,7 @@ app.get('/view/:filename(*)', async (req, res) => {
             }
             
             const content = `
-                <a href="/" class="back-link">← ファイル一覧に戻る</a>
+                <a href="/" class="back-link">← Back to file list</a>
                 <div style="border: 1px solid #d1d9e0; border-radius: 6px; margin: 20px 0;">
                     <iframe 
                         id="content-frame"
@@ -821,7 +823,7 @@ app.get('/view/:filename(*)', async (req, res) => {
                     }
                     ${css}
                 </style>
-                <a href="/" class="back-link">← ファイル一覧に戻る</a>
+                <a href="/" class="back-link">← Back to file list</a>
                 <div class="marp-container">
                     <div class="marp-slide-wrapper">
                         ${html}
@@ -1085,7 +1087,7 @@ app.get('/view/:filename(*)', async (req, res) => {
             );
             
             const content = `
-                <a href="/" class="back-link">← ファイル一覧に戻る</a>
+                <a href="/" class="back-link">← Back to file list</a>
                 <div class="markdown-body">
                     ${html}
                 </div>
@@ -1175,20 +1177,20 @@ app.get('/raw/:filename(*)', async (req, res) => {
 
 // サーバー起動
 app.listen(PORT, () => {
-    console.log(`\n🚀 Markdown/HTML Viewer is running!`);
+    console.log(`\n🐾 Pika is running!`);
     console.log(`📍 URL: http://localhost:${PORT}`);
     console.log(`📁 Target directory: ${targetDir}`);
     console.log(`🔄 Recursive: ${recursive}`);
-    console.log(`\n📝 使い方:`);
-    console.log(`1. ブラウザで http://localhost:${PORT} を開く`);
-    console.log(`2. 表示したいMarkdown/HTMLファイルをクリック`);
-    console.log(`\n💡 コマンドライン例:`);
-    console.log(`   node server.js /path/to/directory`);
-    console.log(`   node server.js /path/to/directory --recursive`);
-    console.log(`   node server.js /path/to/directory --recursive --exclude "test.*,__tests__"`);
-    console.log(`   node server.js . --recursive  # 現在のディレクトリを再帰的に検索`);
-    console.log(`\n✅ MarkdownとHTMLファイルを表示できます`);
-    console.log(`✅ Mermaidダイアグラムを直接描画します`);
-    console.log(`✅ iframeを折りたたみ可能なUIで表示します`);
-    console.log(`\n⏹  終了: Ctrl+C`);
+    console.log(`\n📝 Usage:`);
+    console.log(`1. Open http://localhost:${PORT} in your browser`);
+    console.log(`2. Click on any Markdown/HTML file to view`);
+    console.log(`\n💡 Examples:`);
+    console.log(`   pika /path/to/directory`);
+    console.log(`   pika /path/to/directory --recursive`);
+    console.log(`   pika /path/to/directory --recursive --exclude "test.*,__tests__"`);
+    console.log(`   pika . --recursive  # Recursively browse current directory`);
+    console.log(`\n✅ Supports Markdown and HTML files`);
+    console.log(`✅ Direct Mermaid diagram rendering`);
+    console.log(`✅ Collapsible iframe UI`);
+    console.log(`\n⏹  Stop: Ctrl+C`);
 });

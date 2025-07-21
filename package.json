@@ -1,8 +1,11 @@
 {
-  "name": "md-viewer",
-  "version": "1.0.0",
-  "description": "Simple Markdown to HTML viewer using zenn-markdown-html",
+  "name": "@koinunopochi/pika",
+  "version": "0.1.0",
+  "description": "A fast document viewer for Markdown, HTML, and more - peek at your files like a pika!",
   "main": "server.js",
+  "bin": {
+    "pika": "./server.js"
+  },
   "scripts": {
     "start": "node server.js"
   },
