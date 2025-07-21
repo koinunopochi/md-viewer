@@ -1,0 +1,82 @@
+import * as fs from 'fs/promises';
+import * as path from 'path';
+import { IFileService } from '../interfaces/IFileService';
+import { IPathResolver } from '../interfaces/IPathResolver';
+import { TreeNode } from '../models/TreeNode';
+
+export class DirectoryTreeBuilder {
+  constructor(
+    private fileService: IFileService,
+    private pathResolver: IPathResolver
+  ) {}
+
+  async buildTree(dir: string, recursive: boolean): Promise<TreeNode> {
+    const dirName = path.basename(dir);
+    const rootNode = new TreeNode(dirName, 'directory', '');
+    
+    try {
+      await this.buildTreeRecursive(dir, dir, rootNode, recursive);
+    } catch (error) {
+      // Return empty tree on error
+      console.error(`Error building tree for ${dir}:`, error);
+    }
+    
+    return rootNode;
+  }
+
+  private async buildTreeRecursive(
+    currentDir: string,
+    baseDir: string,
+    parentNode: TreeNode,
+    recursive: boolean
+  ): Promise<void> {
+    try {
+      const entries = await fs.readdir(currentDir, { withFileTypes: true });
+      
+      // Process directories first
+      for (const entry of entries) {
+        const fullPath = path.join(currentDir, entry.name);
+        const relativePath = path.relative(baseDir, fullPath);
+        
+        if (this.pathResolver.isExcluded(relativePath)) {
+          continue;
+        }
+        
+        if (entry.isDirectory() && recursive) {
+          const dirNode = new TreeNode(entry.name, 'directory', relativePath);
+          parentNode.addChild(dirNode);
+          await this.buildTreeRecursive(fullPath, baseDir, dirNode, recursive);
+        }
+      }
+      
+      // Process files
+      for (const entry of entries) {
+        const fullPath = path.join(currentDir, entry.name);
+        const relativePath = path.relative(baseDir, fullPath);
+        
+        if (this.pathResolver.isExcluded(relativePath)) {
+          continue;
+        }
+        
+        if (entry.isFile() && 
+            (this.fileService.isMarkdownFile(entry.name) || 
+             this.fileService.isHtmlFile(entry.name))) {
+          const fileNode = new TreeNode(entry.name, 'file', relativePath);
+          parentNode.addChild(fileNode);
+        }
+      }
+    } catch (error) {
+      console.error(`Error reading directory ${currentDir}:`, error);
+    }
+  }
+
+  getFileCount(node: TreeNode): number {
+    if (node.type === 'file') {
+      return 1;
+    }
+    
+    return node.children.reduce((count, child) => {
+      return count + this.getFileCount(child);
+    }, 0);
+  }
+}
