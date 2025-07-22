@@ -76,11 +76,12 @@ export class MarkdownRenderer implements IMarkdownRenderer {
 
   private processZennHtmlCodeBlocks(html: string): string {
     // zenn-markdown-htmlが生成したHTMLコードブロックを検出
+    // より厳密な正規表現で、language-htmlのみをマッチ
     return html.replace(
-      /<div class="code-block-container">([\s\S]*?)<pre class="language-html"><code[^>]*>([\s\S]*?)<\/code><\/pre><\/div>/g,
+      /<div class="code-block-container">(<div class="code-block-filename-container">[\s\S]*?<\/div>)?<pre class="language-html"><code[^>]*>([\s\S]*?)<\/code><\/pre><\/div>/g,
       (match, titlePart, codeContent) => {
         // タイトル部分を抽出
-        const titleMatch = titlePart.match(/<span class="code-block-filename">([^<]+)<\/span>/);
+        const titleMatch = titlePart ? titlePart.match(/<span class="code-block-filename">([^<]+)<\/span>/) : null;
         const title = titleMatch ? titleMatch[1] : '';
         
         // HTMLコードをデコード
