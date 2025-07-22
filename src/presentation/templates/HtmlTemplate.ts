@@ -642,6 +642,82 @@ export class HtmlTemplate {
             font-size: 13px;
             text-align: center;
         }
+        /* HTML Preview スタイル */
+        .html-preview-container {
+            margin: 20px 0;
+            border: 1px solid #d1d9e0;
+            border-radius: 8px;
+            overflow: hidden;
+            background: white;
+        }
+        .html-preview-header {
+            background: #f6f8fa;
+            padding: 12px 16px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            border-bottom: 1px solid #d1d9e0;
+        }
+        .html-preview-title {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-weight: 600;
+            color: #24292e;
+        }
+        .html-preview-icon {
+            font-size: 16px;
+        }
+        .html-preview-controls {
+            display: flex;
+            gap: 4px;
+        }
+        .html-toggle-btn {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            padding: 6px 12px;
+            border: 1px solid #d1d9e0;
+            background: white;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 13px;
+            transition: all 0.2s;
+        }
+        .html-toggle-btn:hover {
+            background: #f0f0f0;
+        }
+        .html-toggle-btn.active {
+            background: #0969da;
+            color: white;
+            border-color: #0969da;
+        }
+        .html-toggle-btn .icon {
+            font-size: 14px;
+        }
+        .html-preview-content {
+            position: relative;
+        }
+        .html-view {
+            display: none;
+        }
+        .html-view.active {
+            display: block;
+        }
+        .html-view[data-view="preview"] iframe {
+            width: 100%;
+            min-height: 400px;
+            border: none;
+            background: white;
+        }
+        .html-view[data-view="source"] {
+            padding: 0;
+        }
+        .html-view[data-view="source"] pre {
+            margin: 0;
+            border-radius: 0;
+            border: none;
+        }
     `;
   }
 
@@ -689,7 +765,38 @@ export class HtmlTemplate {
                     querySelector: '.mermaid'
                 });
             }
+            
+            // HTML Preview切り替え機能
+            initializeHtmlPreviews();
         });
+        
+        function initializeHtmlPreviews() {
+            const toggleButtons = document.querySelectorAll('.html-toggle-btn');
+            
+            toggleButtons.forEach(button => {
+                button.addEventListener('click', function() {
+                    const mode = this.dataset.mode;
+                    const containerId = this.dataset.target;
+                    const container = document.getElementById(containerId);
+                    
+                    if (!container) return;
+                    
+                    // ボタンのアクティブ状態を切り替え
+                    const allButtons = container.querySelectorAll('.html-toggle-btn');
+                    allButtons.forEach(btn => btn.classList.remove('active'));
+                    this.classList.add('active');
+                    
+                    // ビューの切り替え
+                    const allViews = container.querySelectorAll('.html-view');
+                    allViews.forEach(view => view.classList.remove('active'));
+                    
+                    const targetView = container.querySelector(\`[data-view="\${mode}"]\`);
+                    if (targetView) {
+                        targetView.classList.add('active');
+                    }
+                });
+            });
+        }
     `;
   }
 }

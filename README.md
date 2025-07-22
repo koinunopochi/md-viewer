@@ -10,6 +10,7 @@ A lightning-fast local document viewer for Markdown, HTML, and more - peek at yo
 
 - 📝 **Markdown Viewer** - Beautiful GitHub-style rendering with zenn-markdown-html
 - 🌐 **HTML Support** - Display HTML files with smart iframe embedding
+- 🖼️ **HTML Code Preview** - Interactive preview for HTML code blocks with source toggle
 - 📊 **Mermaid Diagrams** - Direct rendering without iframes
 - 🎨 **Marp Presentations** - Full support for slide presentations
 - 📁 **Smart Directory Browser** - Recursive browsing with collapsible tree view
@@ -119,10 +120,39 @@ These directories are always excluded to improve performance:
 ### 📝 Markdown Rendering
 - **GitHub-Flavored Markdown** - Full GFM support
 - **Syntax Highlighting** - Beautiful code blocks with language detection
+- **HTML Code Preview** - Interactive HTML rendering with source toggle
 - **Task Lists** - Interactive checkboxes
 - **Tables** - Responsive table rendering
 - **Footnotes** - Elegant footnote support
 - **Emoji** - Full emoji support 😄
+
+### 🖼️ HTML Code Block Preview
+Transform HTML code blocks into interactive previews:
+
+````markdown
+```html
+<h1>Hello World!</h1>
+<p>This renders as actual HTML!</p>
+<button onclick="alert('Interactive!')">Click Me</button>
+```
+
+```html:index.html
+<!DOCTYPE html>
+<html>
+<head><title>My Page</title></head>
+<body>
+  <h1>Title support too!</h1>
+</body>
+</html>
+```
+````
+
+Features:
+- **Live Preview** - See HTML rendered in real-time
+- **Source Toggle** - Switch between preview and code view
+- **Title Support** - Works with `html:filename` syntax
+- **Interactive Elements** - Buttons, forms, and scripts work
+- **Sandbox Security** - Safe iframe execution
 
 ### 📊 Mermaid Diagrams
 ```mermaid
