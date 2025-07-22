@@ -125,6 +125,7 @@ These directories are always excluded to improve performance:
 - **Tables** - Responsive table rendering
 - **Footnotes** - Elegant footnote support
 - **Emoji** - Full emoji support 😄
+- **Details/Summary** - Collapsible content sections
 
 ### 🖼️ HTML Code Block Preview
 Transform HTML code blocks into interactive previews:
@@ -164,6 +165,27 @@ graph TD
 - Flowcharts, sequence diagrams, Gantt charts, and more
 - Auto-sizing and responsive design
 - No iframe overhead
+
+### 📦 Collapsible Content (Details/Summary)
+Use native HTML details tags for collapsible sections:
+
+```markdown
+<details>
+<summary>Click to expand</summary>
+
+Hidden content here!
+- Supports lists
+- Code blocks
+- Any markdown content
+
+</details>
+```
+
+Features:
+- **Native Browser Support** - Works without JavaScript
+- **Smooth Animations** - CSS transitions for expand/collapse
+- **Nested Support** - Details within details
+- **Styled Design** - Beautiful GitHub-like appearance
 
 ### 🎨 Marp Presentations
 ```markdown

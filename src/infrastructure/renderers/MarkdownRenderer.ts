@@ -71,6 +71,9 @@ export class MarkdownRenderer implements IMarkdownRenderer {
     // zenn-markdown-htmlによって処理されたHTMLコードブロックも検出して置換
     html = this.processZennHtmlCodeBlocks(html);
     
+    // detailsタグを有効化
+    html = this.enableDetailsTag(html);
+    
     return html;
   }
 
@@ -127,6 +130,31 @@ export class MarkdownRenderer implements IMarkdownRenderer {
       .replace(/&gt;/g, '>')
       .replace(/&quot;/g, '"')
       .replace(/&#39;/g, "'");
+  }
+
+  private enableDetailsTag(html: string): string {
+    // detailsタグ全体を見つけて処理する
+    // 複数のpタグにまたがる場合も考慮
+    const detailsRegex = /(<p[^>]*>)?&lt;details&gt;([\s\S]*?)&lt;\/details&gt;(<\/p>)?/g;
+    
+    html = html.replace(detailsRegex, (match, openP, content, closeP) => {
+      // detailsタグの中身を処理
+      let processedContent = content
+        .replace(/&lt;summary&gt;/g, '<summary>')
+        .replace(/&lt;\/summary&gt;/g, '</summary>')
+        .replace(/<\/p>\s*<p[^>]*>/g, '\n') // pタグの境界を改行に
+        .replace(/<br\s*\/?>/g, ''); // brタグを削除
+      
+      // 不要なpタグの開始と終了を削除
+      processedContent = processedContent
+        .replace(/^<\/p>/gm, '')
+        .replace(/<p[^>]*>$/gm, '');
+      
+      // pタグを除去してdetailsタグで囲む
+      return '<details>' + processedContent + '</details>';
+    });
+    
+    return html;
   }
 
 

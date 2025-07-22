@@ -718,6 +718,42 @@ export class HtmlTemplate {
             border-radius: 0;
             border: none;
         }
+        /* Details/Summary スタイル */
+        details {
+            background-color: #f6f8fa;
+            border: 1px solid #d1d9e0;
+            border-radius: 6px;
+            padding: 0;
+            margin: 16px 0;
+        }
+        details summary {
+            padding: 12px 16px;
+            cursor: pointer;
+            font-weight: 600;
+            user-select: none;
+            list-style: none;
+        }
+        details summary::-webkit-details-marker {
+            display: none;
+        }
+        details summary::before {
+            content: '▶';
+            display: inline-block;
+            margin-right: 8px;
+            transition: transform 0.2s;
+        }
+        details[open] summary::before {
+            transform: rotate(90deg);
+        }
+        details summary:hover {
+            background-color: #f0f0f0;
+        }
+        details > *:not(summary) {
+            padding: 0 16px 16px 16px;
+        }
+        details pre {
+            margin: 8px 0;
+        }
     `;
   }
 
