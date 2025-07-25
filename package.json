@@ -1,13 +1,19 @@
 {
   "name": "@koinunopochi/pika",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "A fast document viewer for Markdown, HTML, and more - peek at your files like a pika!",
-  "main": "server.js",
+  "main": "dist/server.js",
   "bin": {
-    "pika": "./server.js"
+    "pika": "./dist/server.js"
   },
   "scripts": {
-    "start": "node server.js"
+    "start": "node dist/server.js",
+    "dev": "nodemon --exec ts-node src/server.ts",
+    "build": "tsc",
+    "test": "jest",
+    "test:watch": "jest --watch",
+    "test:coverage": "jest --coverage",
+    "prepublishOnly": "npm run build"
   },
   "keywords": [
     "markdown",
@@ -36,8 +42,22 @@
   },
   "dependencies": {
     "@marp-team/marp-core": "^4.1.0",
+    "csv-parse": "^6.1.0",
     "express": "^4.18.2",
     "js-yaml": "^4.1.0",
     "zenn-markdown-html": "^0.1.151"
+  },
+  "devDependencies": {
+    "@types/express": "^5.0.3",
+    "@types/jest": "^30.0.0",
+    "@types/js-yaml": "^4.0.9",
+    "@types/node": "^24.0.15",
+    "@typescript-eslint/eslint-plugin": "^8.37.0",
+    "@typescript-eslint/parser": "^8.37.0",
+    "jest": "^30.0.4",
+    "nodemon": "^3.1.10",
+    "ts-jest": "^29.4.0",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.8.3"
   }
 }
