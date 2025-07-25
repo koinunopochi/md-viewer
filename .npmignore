@@ -1,16 +1,25 @@
-# Test files
-test-marp.md
-*.test.js
-*.spec.js
-
 # Development files
+test/
+coverage/
+playwright-mcp-output/
+docs/
+REFACTORING_RULES.md
+server.js.backup
+jest.config.js
+tsconfig.json
 .gitignore
 .eslintrc
 .prettierrc
 
-# Documentation
-docs/
-examples/
+# Source files (only publish dist)
+src/
+
+# Test files
+**/*.test.ts
+**/*.spec.ts
+**/*.test.js
+**/*.spec.js
+test-*.md
 
 # CI/CD
 .github/
@@ -35,14 +44,18 @@ yarn-error.log*
 
 # Development dependencies
 node_modules/
-coverage/
 .nyc_output/
 
-# Build artifacts
-dist/
-build/
+# Build artifacts  
 *.tgz
 
 # Temporary files
 tmp/
 temp/
+
+# Environment files
+.env
+.env.local
+.env.development
+.env.test
+.env.production
