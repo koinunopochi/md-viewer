@@ -1,6 +1,6 @@
 {
   "name": "@koinunopochi/pika",
-  "version": "0.1.3",
+  "version": "0.1.4",
   "description": "A fast document viewer for Markdown, HTML, and more - peek at your files like a pika!",
   "main": "dist/server.js",
   "bin": {
