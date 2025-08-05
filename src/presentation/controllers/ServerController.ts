@@ -7,6 +7,7 @@ import { IMarkdownRenderer } from '../../domain/interfaces/IMarkdownRenderer';
 import { IMarpRenderer } from '../../domain/interfaces/IMarpRenderer';
 import { ICsvRenderer } from '../../domain/interfaces/ICsvRenderer';
 import { IFileNavigator } from '../../domain/interfaces/IFileNavigator';
+import { IFileEditor } from '../../domain/interfaces/IFileEditor';
 import { IServerController } from './IServerController';
 import { TreeNode } from '../../domain/entities/TreeNode';
 import { HtmlTemplate } from '../templates/HtmlTemplate';
@@ -22,6 +23,7 @@ export class ServerController implements IServerController {
     private marpRenderer: IMarpRenderer,
     private csvRenderer: ICsvRenderer,
     private fileNavigator: IFileNavigator,
+    private fileEditor: IFileEditor,
     private baseDir: string
   ) {}
 
@@ -454,5 +456,37 @@ export class ServerController implements IServerController {
     }
   }
 </script>`;
+  }
+
+  async handleEdit(req: Request, res: Response): Promise<void> {
+    try {
+      const { filePath, originalText, newText, startOffset, endOffset } = req.body;
+
+      // 入力検証
+      if (!filePath || !originalText || newText === undefined) {
+        res.status(400).send('必須パラメータが不足しています');
+        return;
+      }
+
+      // セキュリティチェック
+      if (!this.pathResolver.isPathSafe(filePath)) {
+        res.status(400).send('無効なファイルパスです');
+        return;
+      }
+
+      // ファイル編集を実行
+      await this.fileEditor.editFile({
+        filePath,
+        originalText,
+        newText,
+        startOffset,
+        endOffset
+      });
+
+      res.json({ success: true });
+    } catch (error) {
+      console.error('Edit error:', error);
+      res.status(500).send((error as Error).message);
+    }
   }
 }

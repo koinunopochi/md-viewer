@@ -8,6 +8,9 @@ import { CliParser } from './application/services/CliParser';
 const app = express();
 const PORT = process.env.PORT ? parseInt(process.env.PORT, 10) : 15559;
 
+// JSONボディパーサーの設定
+app.use(express.json());
+
 // コマンドライン引数の解析
 const cliParser = new CliParser();
 const options = cliParser.parse(process.argv);
@@ -43,6 +46,11 @@ app.get('/view/:filename(*)', async (req, res) => {
 // HTMLファイルを直接提供
 app.get('/raw/:filename(*)', async (req, res) => {
   await controller.handleRawHtml(req, res);
+});
+
+// ファイル編集API
+app.post('/api/edit', async (req, res) => {
+  await controller.handleEdit(req, res);
 });
 
 // サーバー起動
