@@ -791,6 +791,237 @@ export class HtmlTemplate {
             }
         });
         
+        // テキスト選択編集機能
+        let selectionInfo = null;
+        
+        // 編集ダイアログの表示
+        function showEditDialog() {
+            if (!selectionInfo) return;
+            
+            // 既存のダイアログを削除
+            const existingDialog = document.getElementById('edit-dialog');
+            if (existingDialog) {
+                existingDialog.remove();
+            }
+            
+            // ダイアログ作成
+            const dialog = document.createElement('div');
+            dialog.id = 'edit-dialog';
+            dialog.style.cssText = \`
+                position: fixed;
+                top: 50%;
+                left: 50%;
+                transform: translate(-50%, -50%);
+                background: white;
+                padding: 20px;
+                border-radius: 8px;
+                box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+                z-index: 2000;
+                max-width: 500px;
+                width: 90%;
+            \`;
+            
+            dialog.innerHTML = \`
+                <h3 style="margin: 0 0 15px 0; color: #333;">テキストを編集</h3>
+                <textarea id="edit-textarea" style="
+                    width: 100%;
+                    min-height: 100px;
+                    padding: 10px;
+                    border: 1px solid #ddd;
+                    border-radius: 4px;
+                    font-family: inherit;
+                    font-size: 14px;
+                    resize: vertical;
+                ">\${selectionInfo.text}</textarea>
+                <div style="margin-top: 15px; display: flex; gap: 10px; justify-content: flex-end;">
+                    <button onclick="cancelEdit()" style="
+                        padding: 8px 16px;
+                        border: 1px solid #ddd;
+                        background: white;
+                        border-radius: 4px;
+                        cursor: pointer;
+                    ">キャンセル</button>
+                    <button onclick="saveEdit()" style="
+                        padding: 8px 16px;
+                        border: none;
+                        background: #1a73e8;
+                        color: white;
+                        border-radius: 4px;
+                        cursor: pointer;
+                    ">保存</button>
+                </div>
+            \`;
+            
+            document.body.appendChild(dialog);
+            
+            // オーバーレイ作成
+            const overlay = document.createElement('div');
+            overlay.id = 'edit-overlay';
+            overlay.style.cssText = \`
+                position: fixed;
+                top: 0;
+                left: 0;
+                right: 0;
+                bottom: 0;
+                background: rgba(0,0,0,0.5);
+                z-index: 1999;
+            \`;
+            overlay.addEventListener('click', cancelEdit);
+            document.body.appendChild(overlay);
+            
+            // テキストエリアにフォーカス
+            document.getElementById('edit-textarea').focus();
+        }
+        
+        // 編集をキャンセル
+        window.cancelEdit = function() {
+            const dialog = document.getElementById('edit-dialog');
+            const overlay = document.getElementById('edit-overlay');
+            if (dialog) dialog.remove();
+            if (overlay) overlay.remove();
+        }
+        
+        // 編集を保存
+        window.saveEdit = async function() {
+            const textarea = document.getElementById('edit-textarea');
+            const newText = textarea.value;
+            
+            if (newText !== selectionInfo.text) {
+                try {
+                    // ファイルパスを取得
+                    const pathMatch = window.location.pathname.match(/^\\/view\\/(.+)$/);
+                    if (!pathMatch) {
+                        alert('ファイルパスを取得できませんでした');
+                        return;
+                    }
+                    
+                    const filePath = decodeURIComponent(pathMatch[1]);
+                    
+                    // APIリクエストを送信
+                    const response = await fetch('/api/edit', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({
+                            filePath: filePath,
+                            originalText: selectionInfo.text,
+                            newText: newText,
+                            startOffset: selectionInfo.startOffset,
+                            endOffset: selectionInfo.endOffset
+                        })
+                    });
+                    
+                    if (response.ok) {
+                        // 成功したらページをリロード
+                        window.location.reload();
+                    } else {
+                        const error = await response.text();
+                        alert('保存に失敗しました: ' + error);
+                    }
+                } catch (error) {
+                    alert('エラーが発生しました: ' + error.message);
+                }
+            }
+            
+            cancelEdit();
+        }
+        
+        // 選択テキストの位置を取得
+        function getSelectionInfo() {
+            const selection = window.getSelection();
+            if (!selection.rangeCount || selection.isCollapsed) return null;
+            
+            const range = selection.getRangeAt(0);
+            const text = selection.toString().trim();
+            if (!text) return null;
+            
+            // markdownコンテンツ内の選択のみ対象
+            const markdownBody = document.querySelector('.markdown-body');
+            if (!markdownBody || !markdownBody.contains(range.commonAncestorContainer)) {
+                return null;
+            }
+            
+            // 選択範囲の座標を取得
+            const rect = range.getBoundingClientRect();
+            
+            // マークダウンソース内でのオフセットを計算（簡易版）
+            // 実際の実装では、より正確な方法が必要
+            return {
+                text: text,
+                rect: rect,
+                startOffset: 0, // TODO: 実際のオフセット計算を実装
+                endOffset: 0    // TODO: 実際のオフセット計算を実装
+            };
+        }
+        
+        // キーボードショートカットハンドラ
+        document.addEventListener('keydown', function(e) {
+            // Ctrl+E または Cmd+E で編集
+            if ((e.ctrlKey || e.metaKey) && e.key === 'e') {
+                const tempSelectionInfo = getSelectionInfo();
+                if (tempSelectionInfo) {
+                    e.preventDefault();
+                    selectionInfo = tempSelectionInfo;
+                    showEditDialog();
+                }
+            }
+            
+            // Escapeでダイアログを閉じる
+            if (e.key === 'Escape') {
+                const dialog = document.getElementById('edit-dialog');
+                if (dialog) {
+                    cancelEdit();
+                }
+            }
+        });
+        
+        // 選択時にツールチップを表示
+        document.addEventListener('selectionchange', function() {
+            const tempSelectionInfo = getSelectionInfo();
+            if (tempSelectionInfo && !document.getElementById('selection-tooltip')) {
+                // 既存の選択情報を更新
+                selectionInfo = tempSelectionInfo;
+                
+                // ツールチップを作成
+                const tooltip = document.createElement('div');
+                tooltip.id = 'selection-tooltip';
+                tooltip.style.cssText = \`
+                    position: fixed;
+                    background: rgba(0, 0, 0, 0.8);
+                    color: white;
+                    padding: 6px 12px;
+                    border-radius: 4px;
+                    font-size: 12px;
+                    z-index: 9999;
+                    pointer-events: none;
+                    animation: fadeIn 0.2s ease;
+                \`;
+                tooltip.innerHTML = 'Ctrl+E で編集 (Mac: ⌘+E)';
+                
+                // 位置を設定
+                const rect = tempSelectionInfo.rect;
+                tooltip.style.left = (rect.left + rect.width / 2 - 60) + 'px';
+                tooltip.style.top = (rect.top - 30) + 'px';
+                
+                document.body.appendChild(tooltip);
+                
+                // 2秒後に自動で削除
+                setTimeout(() => {
+                    if (tooltip.parentNode) {
+                        tooltip.style.animation = 'fadeOut 0.2s ease';
+                        setTimeout(() => tooltip.remove(), 200);
+                    }
+                }, 2000);
+            } else if (!tempSelectionInfo) {
+                // 選択が解除されたらツールチップを削除
+                const tooltip = document.getElementById('selection-tooltip');
+                if (tooltip) {
+                    tooltip.remove();
+                }
+            }
+        });
+        
         // ページ読み込み後にMermaidを実行
         document.addEventListener('DOMContentLoaded', async function() {
             const mermaidElements = document.querySelectorAll('.mermaid');
@@ -804,6 +1035,69 @@ export class HtmlTemplate {
             
             // HTML Preview切り替え機能
             initializeHtmlPreviews();
+            
+            // アニメーションスタイルを追加
+            const style = document.createElement('style');
+            style.textContent = \`
+                @keyframes fadeIn {
+                    from { opacity: 0; transform: translateY(10px); }
+                    to { opacity: 1; transform: translateY(0); }
+                }
+                @keyframes fadeOut {
+                    from { opacity: 1; transform: translateY(0); }
+                    to { opacity: 0; transform: translateY(10px); }
+                }
+                
+                /* ショートカットヒント */
+                .shortcut-hint {
+                    position: fixed;
+                    bottom: 20px;
+                    right: 20px;
+                    background: rgba(0, 0, 0, 0.7);
+                    color: white;
+                    padding: 10px 16px;
+                    border-radius: 6px;
+                    font-size: 13px;
+                    z-index: 1000;
+                    opacity: 0;
+                    transition: opacity 0.3s ease;
+                    pointer-events: none;
+                }
+                
+                .shortcut-hint.visible {
+                    opacity: 1;
+                }
+                
+                /* キーボードキースタイル */
+                kbd {
+                    display: inline-block;
+                    padding: 2px 6px;
+                    font-size: 11px;
+                    line-height: 1.4;
+                    color: #444;
+                    background-color: #fafafa;
+                    border: 1px solid #ccc;
+                    border-radius: 3px;
+                    box-shadow: 0 1px 0 rgba(0,0,0,0.2);
+                    font-family: monospace;
+                    white-space: nowrap;
+                }
+            \`;
+            document.head.appendChild(style);
+            
+            // ショートカットヒントを追加
+            const hint = document.createElement('div');
+            hint.className = 'shortcut-hint';
+            hint.innerHTML = 'テキストを選択して <kbd>Ctrl+E</kbd> で編集 (Mac: <kbd>⌘+E</kbd>)';
+            document.body.appendChild(hint);
+            
+            // 初回のみヒントを表示
+            setTimeout(() => {
+                hint.classList.add('visible');
+                setTimeout(() => {
+                    hint.classList.remove('visible');
+                }, 5000);
+            }, 1000);
         });
         
         function initializeHtmlPreviews() {
