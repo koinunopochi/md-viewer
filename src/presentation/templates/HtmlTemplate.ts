@@ -833,6 +833,25 @@ export class HtmlTemplate {
                     font-size: 14px;
                     resize: vertical;
                 ">\${selectionInfo.text}</textarea>
+                <div style="
+                    margin-top: 8px;
+                    font-size: 12px;
+                    color: #666;
+                ">
+                    <kbd style="
+                        padding: 2px 4px;
+                        font-size: 11px;
+                        background: #f0f0f0;
+                        border: 1px solid #ccc;
+                        border-radius: 3px;
+                    ">Ctrl+Enter</kbd> / <kbd style="
+                        padding: 2px 4px;
+                        font-size: 11px;
+                        background: #f0f0f0;
+                        border: 1px solid #ccc;
+                        border-radius: 3px;
+                    ">⌘+Enter</kbd> で保存
+                </div>
                 <div style="margin-top: 15px; display: flex; gap: 10px; justify-content: flex-end;">
                     <button onclick="cancelEdit()" style="
                         padding: 8px 16px;
@@ -848,7 +867,7 @@ export class HtmlTemplate {
                         color: white;
                         border-radius: 4px;
                         cursor: pointer;
-                    ">保存</button>
+                    " title="Ctrl+Enter / ⌘+Enter">保存</button>
                 </div>
             \`;
             
@@ -870,7 +889,17 @@ export class HtmlTemplate {
             document.body.appendChild(overlay);
             
             // テキストエリアにフォーカス
-            document.getElementById('edit-textarea').focus();
+            const textarea = document.getElementById('edit-textarea');
+            textarea.focus();
+            
+            // テキストエリアでのキーボードショートカット
+            textarea.addEventListener('keydown', function(e) {
+                // Ctrl+Enter または Cmd+Enter で保存
+                if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') {
+                    e.preventDefault();
+                    saveEdit();
+                }
+            });
         }
         
         // 編集をキャンセル
