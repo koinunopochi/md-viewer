@@ -6,6 +6,7 @@ import { MarkdownRenderer } from '../../infrastructure/renderers/MarkdownRendere
 import { MarpRenderer } from '../../infrastructure/renderers/MarpRenderer';
 import { CsvRenderer } from '../../infrastructure/renderers/CsvRenderer';
 import { FileNavigator } from '../../infrastructure/file-system/FileNavigator';
+import { FileEditor } from '../../infrastructure/file-system/FileEditor';
 import { IFileService } from '../../domain/interfaces/IFileService';
 import { IPathResolver } from '../../domain/interfaces/IPathResolver';
 import { IDirectoryTreeBuilder } from '../../domain/interfaces/IDirectoryTreeBuilder';
@@ -13,6 +14,7 @@ import { IMarkdownRenderer } from '../../domain/interfaces/IMarkdownRenderer';
 import { IMarpRenderer } from '../../domain/interfaces/IMarpRenderer';
 import { ICsvRenderer } from '../../domain/interfaces/ICsvRenderer';
 import { IFileNavigator } from '../../domain/interfaces/IFileNavigator';
+import { IFileEditor } from '../../domain/interfaces/IFileEditor';
 import { IServerController } from '../controllers/IServerController';
 
 export class AppFactory {
@@ -24,6 +26,7 @@ export class AppFactory {
     const marpRenderer = this.createMarpRenderer();
     const csvRenderer = this.createCsvRenderer();
     const fileNavigator = this.createFileNavigator(fileService, pathResolver, baseDir);
+    const fileEditor = this.createFileEditor(baseDir);
 
     return new ServerController(
       fileService,
@@ -33,6 +36,7 @@ export class AppFactory {
       marpRenderer,
       csvRenderer,
       fileNavigator,
+      fileEditor,
       baseDir
     );
   }
@@ -70,5 +74,9 @@ export class AppFactory {
     baseDir: string
   ): IFileNavigator {
     return new FileNavigator(fileService, pathResolver, baseDir);
+  }
+
+  static createFileEditor(baseDir: string): IFileEditor {
+    return new FileEditor(baseDir);
   }
 }

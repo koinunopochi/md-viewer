@@ -2,13 +2,15 @@
 
 A lightning-fast local document viewer for Markdown, HTML, and more - peek at your files like a pika!
 
-![Version](https://img.shields.io/badge/version-0.1.0-blue)
+![Version](https://img.shields.io/badge/version-0.1.5-blue)
 ![Node](https://img.shields.io/badge/node-%3E%3D14.0.0-green)
 ![License](https://img.shields.io/badge/license-MIT-yellow)
 
 ## ✨ Features
 
 - 📝 **Markdown Viewer** - Beautiful GitHub-style rendering with zenn-markdown-html
+- ✏️ **In-Browser Editing** - Edit Markdown files directly in your browser with keyboard shortcuts
+- 📢 **Announcement System** - Automatic notifications for updates and important messages
 - 🌐 **HTML Support** - Display HTML files with smart iframe embedding
 - 🖼️ **HTML Code Preview** - Interactive preview for HTML code blocks with source toggle
 - 📊 **Mermaid Diagrams** - Direct rendering without iframes
@@ -126,6 +128,41 @@ These directories are always excluded to improve performance:
 - **Footnotes** - Elegant footnote support
 - **Emoji** - Full emoji support 😄
 - **Details/Summary** - Collapsible content sections
+
+### ✏️ In-Browser Editing (New!)
+Edit your Markdown files directly in the browser:
+
+**How to use:**
+1. Select any text in a Markdown file
+2. Press `Ctrl+E` (Windows/Linux) or `⌘+E` (Mac)
+3. Edit the text in the popup dialog
+4. Press `Ctrl+Enter` or `⌘+Enter` to save
+5. Page automatically reloads with your changes
+
+**Features:**
+- **Keyboard Shortcuts** - Quick editing with hotkeys
+- **Visual Feedback** - Tooltip shows shortcut when text is selected
+- **Auto-save** - Changes are saved directly to the file
+- **Smart Detection** - Only works on Markdown content
+- **Safe Editing** - Original text is preserved until you save
+
+### 📢 Announcement System (New!)
+Stay updated with automatic notifications:
+
+**Features:**
+- **Auto-fetch** - Checks for announcements on startup and every hour
+- **Priority Levels** - Info (ℹ️), Warning (⚠️), Error (❌)
+- **Dismiss Management** - Close notifications to mark as read
+- **Persistent Storage** - Uses localStorage to remember dismissed items
+- **Non-intrusive** - Slides in from the right, errors auto-dismiss after 5 seconds
+- **Badge Counter** - Shows unread count in a pulsing red badge
+- **Expandable Details** - Click notifications to see full content and links
+
+**Notification UI:**
+- Appears in the top-right corner
+- Click header to expand/collapse details
+- Click × to dismiss and mark as read
+- Click the badge to show all notifications again
 
 ### 🖼️ HTML Code Block Preview
 Transform HTML code blocks into interactive previews:
