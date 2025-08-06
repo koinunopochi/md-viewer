@@ -754,6 +754,163 @@ export class HtmlTemplate {
         details pre {
             margin: 8px 0;
         }
+        /* お知らせ通知スタイル */
+        .announcement-container {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 10000;
+            max-width: 400px;
+            animation: slideIn 0.3s ease;
+        }
+        @keyframes slideIn {
+            from {
+                transform: translateX(100%);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+        @keyframes slideOut {
+            from {
+                transform: translateX(0);
+                opacity: 1;
+            }
+            to {
+                transform: translateX(100%);
+                opacity: 0;
+            }
+        }
+        .announcement-item {
+            background: white;
+            border: 1px solid #d1d9e0;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            margin-bottom: 10px;
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+        .announcement-item.hiding {
+            animation: slideOut 0.3s ease forwards;
+        }
+        .announcement-header {
+            padding: 12px 16px;
+            background: #f6f8fa;
+            border-bottom: 1px solid #d1d9e0;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            cursor: pointer;
+        }
+        .announcement-header:hover {
+            background: #ebeef1;
+        }
+        .announcement-title-section {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            flex: 1;
+        }
+        .announcement-icon {
+            font-size: 18px;
+        }
+        .announcement-icon.info { color: #0969da; }
+        .announcement-icon.warning { color: #f59e0b; }
+        .announcement-icon.error { color: #dc2626; }
+        .announcement-title {
+            font-weight: 600;
+            color: #24292e;
+            font-size: 14px;
+        }
+        .announcement-close {
+            background: none;
+            border: none;
+            color: #586069;
+            cursor: pointer;
+            padding: 4px;
+            font-size: 18px;
+            line-height: 1;
+            transition: color 0.2s;
+        }
+        .announcement-close:hover {
+            color: #24292e;
+        }
+        .announcement-body {
+            padding: 16px;
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease;
+        }
+        .announcement-body.expanded {
+            max-height: 500px;
+            overflow-y: auto;
+        }
+        .announcement-content {
+            color: #24292e;
+            font-size: 14px;
+            line-height: 1.6;
+            margin-bottom: 8px;
+        }
+        .announcement-date {
+            color: #586069;
+            font-size: 12px;
+            margin-bottom: 12px;
+        }
+        .announcement-links {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+        .announcement-link {
+            display: inline-block;
+            padding: 6px 12px;
+            background: #0969da;
+            color: white;
+            text-decoration: none;
+            border-radius: 6px;
+            font-size: 13px;
+            transition: background 0.2s;
+        }
+        .announcement-link:hover {
+            background: #0860ca;
+        }
+        .announcement-badge {
+            position: fixed;
+            top: 10px;
+            right: 10px;
+            background: #dc2626;
+            color: white;
+            border-radius: 50%;
+            width: 24px;
+            height: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            font-weight: bold;
+            cursor: pointer;
+            z-index: 9999;
+            animation: pulse 2s infinite;
+            box-shadow: 0 2px 8px rgba(220, 38, 38, 0.4);
+        }
+        @keyframes pulse {
+            0%, 100% {
+                transform: scale(1);
+            }
+            50% {
+                transform: scale(1.1);
+            }
+        }
+        .announcement-error-message {
+            padding: 10px 16px;
+            background: #fef2f2;
+            border-left: 4px solid #dc2626;
+            color: #991b1b;
+            font-size: 13px;
+            margin: 10px 0;
+        }
     `;
   }
 
@@ -1051,6 +1208,248 @@ export class HtmlTemplate {
             }
         });
         
+        // お知らせ通知管理
+        class AnnouncementManager {
+            constructor() {
+                this.STORAGE_KEY = 'pika_announcement_states';
+                this.API_URL = 'https://pika.lynxes.org/api/tools/announcements';
+                this.CHECK_INTERVAL = 60 * 60 * 1000; // 1時間
+                this.container = null;
+                this.announcements = [];
+                this.expandedIds = new Set();
+            }
+
+            async init() {
+                await this.checkAnnouncements();
+                // 定期チェック
+                setInterval(() => this.checkAnnouncements(), this.CHECK_INTERVAL);
+            }
+
+            async fetchAnnouncements() {
+                try {
+                    const response = await fetch(this.API_URL);
+                    if (!response.ok) {
+                        throw new Error(\`HTTP error! status: \${response.status}\`);
+                    }
+                    const data = await response.json();
+                    return data.announcements || [];
+                } catch (error) {
+                    console.error('Failed to fetch announcements:', error);
+                    this.showError('お知らせの取得に失敗しました');
+                    return [];
+                }
+            }
+
+            getStates() {
+                try {
+                    const stored = localStorage.getItem(this.STORAGE_KEY);
+                    return stored ? JSON.parse(stored) : [];
+                } catch {
+                    return [];
+                }
+            }
+
+            saveStates(states) {
+                try {
+                    localStorage.setItem(this.STORAGE_KEY, JSON.stringify(states));
+                } catch (error) {
+                    console.error('Failed to save announcement states:', error);
+                }
+            }
+
+            async checkAnnouncements() {
+                const announcements = await this.fetchAnnouncements();
+                const states = this.getStates();
+                const dismissedIds = new Set(states.filter(s => s.isDismissed).map(s => s.id));
+                
+                const unread = announcements.filter(a => !dismissedIds.has(a.id));
+                
+                if (unread.length > 0) {
+                    this.showAnnouncements(unread);
+                }
+            }
+
+            showAnnouncements(announcements) {
+                this.announcements = announcements;
+                
+                if (!this.container) {
+                    this.container = document.createElement('div');
+                    this.container.className = 'announcement-container';
+                    document.body.appendChild(this.container);
+                }
+
+                this.container.innerHTML = '';
+                
+                announcements.forEach(announcement => {
+                    const item = this.createAnnouncementElement(announcement);
+                    this.container.appendChild(item);
+                });
+
+                // バッジも表示
+                this.updateBadge(announcements.length);
+            }
+
+            createAnnouncementElement(announcement) {
+                const item = document.createElement('div');
+                item.className = 'announcement-item';
+                item.dataset.id = announcement.id;
+
+                const iconMap = {
+                    info: 'ℹ️',
+                    warning: '⚠️',
+                    error: '❌'
+                };
+                const icon = iconMap[announcement.priority] || 'ℹ️';
+
+                const formattedDate = new Date(announcement.date).toLocaleDateString('ja-JP', {
+                    year: 'numeric',
+                    month: 'long',
+                    day: 'numeric'
+                });
+
+                item.innerHTML = \`
+                    <div class="announcement-header" onclick="announcementManager.toggleExpand('\${announcement.id}')">
+                        <div class="announcement-title-section">
+                            <span class="announcement-icon \${announcement.priority || 'info'}">\${icon}</span>
+                            <div class="announcement-title">\${this.escapeHtml(announcement.title)}</div>
+                        </div>
+                        <button class="announcement-close" onclick="event.stopPropagation(); announcementManager.dismiss('\${announcement.id}')">×</button>
+                    </div>
+                    <div class="announcement-body" id="announcement-body-\${announcement.id}">
+                        <div class="announcement-date">\${formattedDate}</div>
+                        <div class="announcement-content">\${this.escapeHtml(announcement.content)}</div>
+                        \${announcement.links ? \`
+                            <div class="announcement-links">
+                                \${announcement.links.map(link => \`
+                                    <a href="\${this.escapeHtml(link.url)}" class="announcement-link" target="_blank">
+                                        \${this.escapeHtml(link.text)}
+                                    </a>
+                                \`).join('')}
+                            </div>
+                        \` : ''}
+                    </div>
+                \`;
+
+                // 初回は最初の1件だけ展開
+                if (this.announcements.indexOf(announcement) === 0) {
+                    setTimeout(() => this.toggleExpand(announcement.id), 100);
+                }
+
+                return item;
+            }
+
+            toggleExpand(id) {
+                const body = document.getElementById(\`announcement-body-\${id}\`);
+                if (body) {
+                    if (this.expandedIds.has(id)) {
+                        body.classList.remove('expanded');
+                        this.expandedIds.delete(id);
+                    } else {
+                        body.classList.add('expanded');
+                        this.expandedIds.add(id);
+                    }
+                }
+            }
+
+            dismiss(id) {
+                const states = this.getStates();
+                const existingIndex = states.findIndex(s => s.id === id);
+                
+                const newState = {
+                    id: id,
+                    dismissedAt: new Date().toISOString(),
+                    isDismissed: true
+                };
+
+                if (existingIndex >= 0) {
+                    states[existingIndex] = newState;
+                } else {
+                    states.push(newState);
+                }
+                
+                this.saveStates(states);
+
+                // UIから削除
+                const item = document.querySelector(\`.announcement-item[data-id="\${id}"]\`);
+                if (item) {
+                    item.classList.add('hiding');
+                    setTimeout(() => {
+                        item.remove();
+                        this.announcements = this.announcements.filter(a => a.id !== id);
+                        this.updateBadge(this.announcements.length);
+                        
+                        // すべて閉じたらコンテナも削除
+                        if (this.announcements.length === 0 && this.container) {
+                            this.container.remove();
+                            this.container = null;
+                        }
+                    }, 300);
+                }
+            }
+
+            updateBadge(count) {
+                let badge = document.getElementById('announcement-badge');
+                
+                if (count > 0) {
+                    if (!badge) {
+                        badge = document.createElement('div');
+                        badge.id = 'announcement-badge';
+                        badge.className = 'announcement-badge';
+                        badge.onclick = () => this.showAllAnnouncements();
+                        document.body.appendChild(badge);
+                    }
+                    badge.textContent = count;
+                    badge.style.display = 'flex';
+                } else {
+                    if (badge) {
+                        badge.style.display = 'none';
+                    }
+                }
+            }
+
+            showAllAnnouncements() {
+                if (this.announcements.length > 0) {
+                    this.showAnnouncements(this.announcements);
+                    // すべて展開
+                    this.announcements.forEach(a => {
+                        if (!this.expandedIds.has(a.id)) {
+                            this.toggleExpand(a.id);
+                        }
+                    });
+                }
+            }
+
+            showError(message) {
+                if (!this.container) {
+                    this.container = document.createElement('div');
+                    this.container.className = 'announcement-container';
+                    document.body.appendChild(this.container);
+                }
+
+                const errorDiv = document.createElement('div');
+                errorDiv.className = 'announcement-error-message';
+                errorDiv.textContent = message;
+                this.container.appendChild(errorDiv);
+                
+                setTimeout(() => {
+                    errorDiv.remove();
+                    if (this.container && this.container.children.length === 0) {
+                        this.container.remove();
+                        this.container = null;
+                    }
+                }, 5000);
+            }
+
+            escapeHtml(text) {
+                const div = document.createElement('div');
+                div.textContent = text;
+                return div.innerHTML;
+            }
+        }
+
+        // グローバルインスタンス作成
+        const announcementManager = new AnnouncementManager();
+
         // ページ読み込み後にMermaidを実行
         document.addEventListener('DOMContentLoaded', async function() {
             const mermaidElements = document.querySelectorAll('.mermaid');
@@ -1064,6 +1463,9 @@ export class HtmlTemplate {
             
             // HTML Preview切り替え機能
             initializeHtmlPreviews();
+            
+            // お知らせ通知機能を初期化
+            announcementManager.init();
             
             // アニメーションスタイルを追加
             const style = document.createElement('style');
